@@ -1,0 +1,22 @@
+[
+  {
+    "goal": "总结视频的主要内容",
+    "expectedKeywords": ["计算机网络", "组成", "功能"],
+    "mode": "GENERAL"
+  },
+  {
+    "goal": "学习计算机网络的组成与功能",
+    "expectedKeywords": ["硬件", "软件", "协议", "主机", "数据通信"],
+    "mode": "LEARNING"
+  },
+  {
+    "goal": "审查视频的讲解是否有逻辑漏洞或夸大之处",
+    "expectedKeywords": ["审查", "漏洞", "证据"],
+    "mode": "REVIEW"
+  },
+  {
+    "goal": "帮我创作一个关于这个视频内容的短视频文案",
+    "expectedKeywords": ["文案", "脚本", "标题"],
+    "mode": "CREATION"
+  }
+]

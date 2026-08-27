@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: video-agent-server
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/video_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none          # 表结构由 Flyway 管理
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: video-analysis-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# ===== 应用配置（环境变量可覆盖，见 docker-compose.yml / 部署文档）=====
+app:
+  jwt:
+    # HS256 secret，生产环境必须通过 JWT_SECRET 覆盖（≥32 字节）
+    secret: ${JWT_SECRET:video-agent-dev-secret-please-change-in-prod-0123456789}
+    expiration-seconds: ${JWT_EXPIRATION_SECONDS:604800}
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin123}
+    bucket: ${MINIO_BUCKET:video-media}
+  qdrant:
+    base-url: ${QDRANT_BASE_URL:http://localhost:6333}
+  rate-limit:
+    # 成本护栏：以「一次 LLM 消费动作」为单位（提交分析 / 追问 / 自动标题共用额度）
+    user-rps: ${RATE_LIMIT_USER_RPS:2}
+    global-rps: ${RATE_LIMIT_GLOBAL_RPS:3}
+  ai:
+    llm:
+      # DeepSeek OpenAI 兼容接口（阶段四起使用）
+      base-url: ${LLM_BASE_URL:https://api.deepseek.com}
+      api-key: ${LLM_API_KEY:}
+      model: ${LLM_MODEL:deepseek-chat}
+    embedding:
+      # BGE-M3 OpenAI 兼容 /embeddings（阶段三起使用）
+      base-url: ${EMBEDDING_BASE_URL:http://localhost:8000}
+      api-key: ${EMBEDDING_API_KEY:}
+      model: ${EMBEDDING_MODEL:bge-m3}
+      dimensions: ${EMBEDDING_DIMENSIONS:1024}
+    asr:
+      # 本地 faster-whisper 独立推理服务（阶段二起使用）
+      base-url: ${ASR_BASE_URL:http://localhost:8001}
+    ocr:
+      # 本地 PaddleOCR 独立推理服务（阶段二起使用）
+      base-url: ${OCR_BASE_URL:http://localhost:8002}
+  ffmpeg:
+    # FFmpeg 可执行文件路径（可用环境变量 FFMPEG_PATH 覆盖）
+    path: ${FFMPEG_PATH:ffmpeg}
+  llm:
+    # 用户 API Key 静态加密主密钥（生产必设；未配置时回退派生自 JWT secret，仅限开发）
+    master-key: ${LLM_MASTER_KEY:}
+
+logging:
+  level:
+    com.videoagent: INFO
