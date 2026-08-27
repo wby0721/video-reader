@@ -21,7 +21,7 @@ $env:LLM_API_KEY = "<你的 DeepSeek API Key>"
 $env:LLM_MODEL = "deepseek-v4-flash"
 # 用户 Key 静态加密主密钥（生产必设；不设则回退派生自 JWT_SECRET）
 $env:LLM_MASTER_KEY = "<随机主密钥>"
-& "$env:JAVA_HOME\bin\java.exe" -jar server\target\video-agent-server-0.1.0-SNAPSHOT.jar
+& "$env:JAVA_HOME\bin\java.exe" -jar server\target\video-reader-server-0.1.0-SNAPSHOT.jar
 
 ## 4. 验收
 # curl http://localhost:8081/health

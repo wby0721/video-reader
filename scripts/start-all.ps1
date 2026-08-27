@@ -1,4 +1,4 @@
-﻿<#
+<#
 =============================================================================
   Video Agent 一键启动脚本
   依次启动：MySQL → Redis → Kafka → MinIO → Qdrant → 推理(embedding/asr/ocr)
@@ -31,7 +31,7 @@ $KafkaProps= "$Tools\kraft-server.properties"
 $Minio     = "$Tools\minio.exe"
 $Qdrant    = "$Tools\qdrant\qdrant.exe"
 $QdrantCfg = "$Tools\qdrant-config.yaml"
-$Jar       = "$Root\video_reader\server\target\video-agent-server-0.1.0-SNAPSHOT.jar"
+$Jar       = "$Root\video_reader\server\target\video-reader-server-0.1.0-SNAPSHOT.jar"
 $Client    = "$Root\video_reader\client"
 
 # ---------------- 密钥加载（安全约定） ----------------

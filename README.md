@@ -1,8 +1,8 @@
-# Video Agent（可信长视频理解 Agent）
+# Video Reader（可信长视频理解 Agent）
 
 把长视频转化为**可检索、可追溯、可验证、可继续追问**的结构化知识——以「证据可信」为差异化核心。
 
-> 技术栈：Java 21 · Spring Boot 3 · LangChain4j · Kafka · Vue 3（见 `docs/` 与根目录方案文档 `../video-agent-rebuild-plan.md`）
+> 技术栈：Java 21 · Spring Boot 3 · Kafka · Vue 3（见 `docs/`）
 
 ## 目录结构
 

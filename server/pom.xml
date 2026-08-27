@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.videoagent</groupId>
-    <artifactId>video-agent-server</artifactId>
+    <artifactId>video-reader-server</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>video-agent-server</name>
-    <description>Video Agent — 可信长视频理解 Agent（阶段一：工程骨架 + 中间件 + 多用户鉴权）</description>
+    <name>video-reader-server</name>
+    <description>Video Reader — 可信长视频理解 Agent（多角色循环 + 三级信任校验）</description>
 
     <properties>
         <java.version>21</java.version>

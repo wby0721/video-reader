@@ -1,8 +1,8 @@
-# Video Agent — 中间件编排
+# Video Reader — 中间件编排
 # 用途：一键启动 Kafka / MySQL / MinIO / Qdrant / Redis，供后端本地开发与演示。
 # 用法：docker compose up -d
 # 凭据默认值见下方 ${VAR:-default}，与 server/src/main/resources/application.yml 默认值保持一致。
-name: video-agent
+name: video-reader
 
 services:
   mysql:
