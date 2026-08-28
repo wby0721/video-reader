@@ -118,6 +118,9 @@ services:
       EMBEDDING_DEVICE: cpu
       EMBEDDING_MODEL_PATH: /app/models/bge-m3
       BACKEND_URL: http://backend:8081/health   # 看门狗：探测后端存活
+    volumes:
+      # BGE-M3 模型目录（setup-server.sh 下载或本机 scp 上传，见 docs/DEPLOY.md）
+      - ./data/models:/app/models
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 15s

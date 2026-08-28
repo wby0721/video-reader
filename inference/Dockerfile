@@ -31,9 +31,9 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
         sentence-transformers \
         rapidocr_onnxruntime
 
-# BGE-M3 模型固化进镜像（构建期一次性下载，国内走 hf-mirror）
-ENV HF_ENDPOINT=https://hf-mirror.com
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-m3').save('/app/models/bge-m3')"
+# 注意：BGE-M3 模型【不在构建期下载】（海外服务器连 HF 镜像不稳定）。
+# 模型由 setup-server.sh 下载或本机 scp 上传到 data/models/bge-m3，
+# 以卷挂载到 /app/models，compose 通过 EMBEDDING_MODEL_PATH 指向。
 
 COPY asr ./asr
 COPY ocr ./ocr

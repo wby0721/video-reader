@@ -43,10 +43,34 @@ for key in MYSQL_ROOT_PASSWORD MINIO_ROOT_USER MINIO_ROOT_PASSWORD JWT_SECRET LL
 done
 
 # ---------- 3. 构建镜像 ----------
-echo "==> 构建镜像（首次较久：后端编译 + BGE-M3 模型下载 ~2GB）..."
+echo "==> 构建镜像（首次较久：后端编译 + Python 依赖，约 5-10 分钟）..."
 docker compose -f docker-compose.prod.yml build
 
-# ---------- 4. 生成自签占位证书（让 nginx 能先启动，随后 certbot 替换） ----------
+# ---------- 4. BGE-M3 模型（embedding 必需，约 2GB） ----------
+MODEL_DIR="data/models/bge-m3"
+if [ ! -d "$MODEL_DIR" ]; then
+    echo "==> 未找到 BGE-M3 模型，尝试下载（海外服务器连 HF 镜像不稳定，可能失败）..."
+    echo "    最稳方案：本机已有模型，scp 上传后重跑本脚本（见 docs/DEPLOY.md 第 3 节）"
+    mkdir -p data/models
+    for ep in "https://huggingface.co" "https://hf-mirror.com"; do
+        echo "==> 尝试模型源: $ep"
+        if docker run --rm \
+            -v "$(pwd)/data/models:/app/models" \
+            -e HF_ENDPOINT="$ep" \
+            video-reader-prod-embedding:latest \
+            python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-m3').save('/app/models/bge-m3')"; then
+            echo "==> BGE-M3 模型下载完成"
+            break
+        fi
+        echo "!! $ep 失败，尝试下一个..."
+    done
+fi
+if [ ! -d "$MODEL_DIR" ]; then
+    echo "!! BGE-M3 模型未就绪。请从本机 scp 上传后重跑（命令见 docs/DEPLOY.md），或检查服务器网络。"
+    exit 1
+fi
+
+# ---------- 5. 生成自签占位证书（让 nginx 能先启动，随后 certbot 替换） ----------
 mkdir -p data/certbot/conf data/certbot/www
 if [ ! -f data/certbot/conf/live/jasonsweb.xyz/fullchain.pem ]; then
     echo "==> 生成自签占位证书（certbot 正式证书签发后自动替换）..."
@@ -57,11 +81,11 @@ if [ ! -f data/certbot/conf/live/jasonsweb.xyz/fullchain.pem ]; then
         -subj "/CN=jasonsweb.xyz"
 fi
 
-# ---------- 5. 启动全部服务 ----------
+# ---------- 6. 启动全部服务 ----------
 echo "==> 启动服务..."
 docker compose -f docker-compose.prod.yml up -d
 
-# ---------- 6. 状态与下一步 ----------
+# ---------- 7. 状态与下一步 ----------
 echo ""
 echo "============================================================"
 echo " 部署完成！接下来："

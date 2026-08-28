@@ -54,11 +54,19 @@ vi .env
 #          XF_APPID / XF_APIKEY / XF_APISECRET（讯飞）
 #    可选：LLM_API_KEY（留空 = 用户自带 Key 方案）、LLM_MODEL、RATE_LIMIT_*
 
-# 4. 一键构建 + 启动
+# 4. 准备 BGE-M3 模型（推荐：从本机 scp 上传，最稳；或让脚本自动下载）
+#    本机（Windows PowerShell）执行，把本地已有的模型传上去：
+#      scp -r "E:\agent_projct\.tools\models\bge-m3" root@<服务器IP>:/root/video-reader/data/models/
+#    服务器上确认：
+#      ls data/models/bge-m3     # 应看到 pytorch_model.bin / config.json 等
+#    若本机没有该模型，setup-server.sh 会用 huggingface.co / hf-mirror.com 自动尝试下载
+#    （海外服务器连 HF 镜像可能不稳定，上传本机模型是最稳路径）
+
+# 5. 一键构建 + 启动（含模型检查）
 bash scripts/setup-server.sh
 ```
 
-首次构建 10-30 分钟（后端编译 + BGE-M3 模型下载）。完成后：
+首次构建 5-15 分钟（后端编译 + Python 依赖）。完成后：
 ```bash
 docker compose -f docker-compose.prod.yml ps   # 8 个容器应全部 healthy/running
 ```
