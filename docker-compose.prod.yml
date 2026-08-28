@@ -29,6 +29,7 @@ services:
       timeout: 5s
       retries: 20
       start_period: 30s
+    mem_limit: 1g
     restart: unless-stopped
     networks: [vr-net]
 
@@ -37,6 +38,7 @@ services:
     container_name: vr-redis
     volumes:
       - redis_data:/data
+    mem_limit: 256m
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -64,6 +66,7 @@ services:
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
     volumes:
       - kafka_data:/tmp/kraft-combined-logs
+    mem_limit: 1g
     healthcheck:
       test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
       interval: 15s
@@ -122,6 +125,7 @@ services:
     volumes:
       # BGE-M3 模型目录（setup-server.sh 下载或本机 scp 上传，见 docs/DEPLOY.md）
       - ./data/models:/app/models
+    mem_limit: 3g
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 15s
@@ -211,6 +215,8 @@ services:
       # 限流（一次 LLM 消费 = 一个令牌）
       RATE_LIMIT_USER_RPS: ${RATE_LIMIT_USER_RPS:-2}
       RATE_LIMIT_GLOBAL_RPS: ${RATE_LIMIT_GLOBAL_RPS:-3}
+    # 内存上限：JVM MaxRAMPercentage=70 按容器上限自适应（防 8GB 机器上堆膨胀到 5.6GB）
+    mem_limit: 2g
     depends_on:
       mysql:
         condition: service_healthy
