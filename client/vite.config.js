@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     port: 5173,
+    // 允许 Cloudflare Tunnel 域名访问（trycloudflare 每次重启换随机子域名，用通配符）
+    allowedHosts: ['.trycloudflare.com'],
     proxy: {
       '/api': {
         target: 'http://localhost:8081',

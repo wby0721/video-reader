@@ -1,6 +1,7 @@
 // 后端 API 封装（Vite 代理 /api → 8081）
 const TOKEN_KEY = 'va_token';
-const CHUNK = 8 * 1024 * 1024; // 8MB 分片
+// 5MB 分片：S3/MinIO 多段上传要求除末片外每片 >= 5MB（下限），同时兼顾 Cloudflare Tunnel 慢链路
+const CHUNK = 5 * 1024 * 1024;
 
 export const api = {
   token() {

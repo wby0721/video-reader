@@ -1,0 +1,252 @@
+# ============================================================
+# Video Reader 生产编排（服务器部署）
+# 用法：
+#   1. 在仓库根目录创建 .env（参考 .env.example，至少填 MYSQL_ROOT_PASSWORD /
+#      MINIO_ROOT_USER / MINIO_ROOT_PASSWORD / JWT_SECRET / LLM_MASTER_KEY / XF_*）
+#   2. docker compose -f docker-compose.prod.yml build
+#   3. docker compose -f docker-compose.prod.yml up -d
+# 安全设计：仅 nginx 暴露 80/443；中间件/后端/推理只在内网互通，不映射公网端口。
+# ============================================================
+name: video-reader-prod
+
+services:
+  # ---------------- 中间件（内网，不暴露公网） ----------------
+  mysql:
+    image: mysql:8.4
+    container_name: vr-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 设置 MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: video_agent
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  redis:
+    image: redis:7-alpine
+    container_name: vr-redis
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks: [vr-net]
+
+  kafka:
+    # 单节点 KRaft，无 Zookeeper；ADVERTISED 用容器名 kafka，供后端容器内访问
+    image: apache/kafka:3.8.0
+    container_name: vr-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: vr-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?请在 .env 设置 MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?请在 .env 设置 MINIO_ROOT_PASSWORD}
+    command: server /data
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  qdrant:
+    image: qdrant/qdrant:v1.13.4
+    container_name: vr-qdrant
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/readyz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  # ---------------- 推理服务（CPU，内网） ----------------
+  embedding:
+    build:
+      context: ./inference
+      dockerfile: Dockerfile
+    container_name: vr-embedding
+    working_dir: /app/embedding
+    command: ["python", "app.py"]
+    environment:
+      EMBEDDING_PORT: "8000"
+      EMBEDDING_DEVICE: cpu
+      EMBEDDING_MODEL_PATH: /app/models/bge-m3
+      BACKEND_URL: http://backend:8081/health   # 看门狗：探测后端存活
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 60s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  asr:
+    build:
+      context: ./inference
+      dockerfile: Dockerfile
+    container_name: vr-asr
+    working_dir: /app/asr
+    command: ["python", "app.py"]
+    environment:
+      ASR_PORT: "8001"
+      ASR_ENGINE: xfyun                        # 服务器只走讯飞在线，不加载本地模型
+      XF_APPID: ${XF_APPID:-}
+      XF_APIKEY: ${XF_APIKEY:-}
+      XF_APISECRET: ${XF_APISECRET:-}
+      BACKEND_URL: http://backend:8081/health
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  ocr:
+    build:
+      context: ./inference
+      dockerfile: Dockerfile
+    container_name: vr-ocr
+    working_dir: /app/ocr
+    command: ["python", "app.py"]
+    environment:
+      OCR_PORT: "8002"
+      OCR_WORKERS: "1"
+      BACKEND_URL: http://backend:8081/health
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  # ---------------- 后端 ----------------
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: vr-backend
+    environment:
+      SERVER_PORT: "8081"
+      # 服务地址全部指向容器名（内网）
+      MYSQL_URL: jdbc:mysql://mysql:3306/video_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: video-media
+      QDRANT_BASE_URL: http://qdrant:6333
+      EMBEDDING_BASE_URL: http://embedding:8000
+      ASR_BASE_URL: http://asr:8001
+      OCR_BASE_URL: http://ocr:8002
+      # LLM（用户自带 Key 方案：服务器可不配 LLM_API_KEY，用户注册后在设置页提交自己的 Key）
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+      # 安全必设
+      JWT_SECRET: ${JWT_SECRET:?请在 .env 设置 JWT_SECRET（≥32 位随机）}
+      LLM_MASTER_KEY: ${LLM_MASTER_KEY:?请在 .env 设置 LLM_MASTER_KEY}
+      # 限流（一次 LLM 消费 = 一个令牌）
+      RATE_LIMIT_USER_RPS: ${RATE_LIMIT_USER_RPS:-2}
+      RATE_LIMIT_GLOBAL_RPS: ${RATE_LIMIT_GLOBAL_RPS:-3}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 40s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  # ---------------- 前端 + 反代（唯一公网入口） ----------------
+  nginx:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: vr-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks: [vr-net]
+
+volumes:
+  mysql_data:
+  redis_data:
+  kafka_data:
+  minio_data:
+  qdrant_data:
+
+networks:
+  vr-net:
+    driver: bridge

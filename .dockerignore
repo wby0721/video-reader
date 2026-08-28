@@ -1,0 +1,13 @@
+.git
+.tools
+sample-data
+docs
+eval
+scripts
+**/target
+**/node_modules
+**/dist
+**/__pycache__
+*.log
+.env
+data
