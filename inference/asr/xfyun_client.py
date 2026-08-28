@@ -80,7 +80,7 @@ def _upload_small_file(wav_path: str, appid: str, api_key: str, api_secret: str)
     headers = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
     headers["Content-Type"] = f"multipart/form-data; boundary={boundary}"
     # 上传大文件易超时：长超时 + 重试
-    result = _http_json(UPLOAD_URL, headers, body, timeout=300, retries=2)
+    result = _http_json(UPLOAD_URL, headers, body, timeout=180, retries=2)
     if result.get("code") != 0:
         raise RuntimeError(f"音频上传失败: {result.get('code')} {result.get('message')}")
     return result["data"]["url"]
@@ -138,8 +138,9 @@ def _parse_result(result: dict):
 
 
 async def transcribe_file(wav_path: str, appid: str, api_key: str, api_secret: str,
-                          poll_interval: float = 5.0, timeout: float = 900.0):
-    """转写 wav（16k 16bit 单声道），返回 [{start_ms, end_ms, text}]（句子级时间戳）。"""
+                          poll_interval: float = 5.0, timeout: float = 300.0):
+    """转写 wav（16k 16bit 单声道），返回 [{start_ms, end_ms, text}]（句子级时间戳）。
+    timeout=300：3 分钟切片正常 1-2 分钟完成，轮询超时留 5 分钟上限，避免跨境链路挂起过长。"""
     return await asyncio.to_thread(_transcribe_sync, wav_path, appid, api_key, api_secret,
                                    poll_interval, timeout)
 

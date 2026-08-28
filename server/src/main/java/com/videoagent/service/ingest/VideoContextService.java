@@ -254,11 +254,18 @@ public class VideoContextService {
                 List<CompletableFuture<List<VideoContextBuilder.AsrSeg>>> futures = new ArrayList<>();
                 for (FfmpegService.AudioChunk chunk : chunks) {
                     futures.add(CompletableFuture.supplyAsync(() -> {
+                        long t0 = System.currentTimeMillis();
                         try {
                             return transcribeSlice(chunk, engine, xf);
                         } catch (Exception e) {
-                            // 连接重置等瞬时故障：间隔后重试一次（跨境链路常见）
-                            log.warn("切片转写失败（保留其余切片）startMs={}: {}", chunk.startMs(), e.getMessage());
+                            long elapsed = System.currentTimeMillis() - t0;
+                            log.warn("切片转写失败（保留其余切片）startMs={} 耗时{}ms: {}",
+                                    chunk.startMs(), elapsed, e.getMessage());
+                            // 只重试「快速失败」（如跨境连接重置，秒级失败）；
+                            // 慢超时（轮询耗尽 300s）不重试，避免最坏耗时翻倍
+                            if (elapsed >= 120_000) {
+                                return List.of();
+                            }
                             try {
                                 Thread.sleep(3000);
                             } catch (InterruptedException ie) {
