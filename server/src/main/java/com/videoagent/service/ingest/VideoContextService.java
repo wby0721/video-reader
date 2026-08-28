@@ -255,12 +255,21 @@ public class VideoContextService {
                 for (FfmpegService.AudioChunk chunk : chunks) {
                     futures.add(CompletableFuture.supplyAsync(() -> {
                         try {
-                            return transcriptionService.transcribe(chunk.path(), chunk.startMs(), engine, xf).stream()
-                                    .map(s -> new VideoContextBuilder.AsrSeg(s.startMs(), s.endMs(), s.text()))
-                                    .toList();
+                            return transcribeSlice(chunk, engine, xf);
                         } catch (Exception e) {
-                            log.warn("切片转写失败（保留其余切片）: {}", e.getMessage());
-                            return List.of();
+                            // 连接重置等瞬时故障：间隔后重试一次（跨境链路常见）
+                            log.warn("切片转写失败（保留其余切片）startMs={}: {}", chunk.startMs(), e.getMessage());
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException ie) {
+                                Thread.currentThread().interrupt();
+                            }
+                            try {
+                                return transcribeSlice(chunk, engine, xf);
+                            } catch (Exception e2) {
+                                log.warn("切片转写重试仍失败 startMs={}: {}", chunk.startMs(), e2.getMessage());
+                                return List.of();
+                            }
                         }
                     }, pool));
                 }
@@ -277,8 +286,15 @@ public class VideoContextService {
         } catch (Exception e) {
             log.error("ASR 分支失败（保留 OCR 分支）: {}", e.getMessage());
             events.publish(mediaId, "ASR_FAILED", Map.of("error", e.getMessage()));
-            return List.of();
-        }
+            return List.of();        }
+    }
+
+    /** 转写单个音频切片为带时间戳的文本段。 */
+    private List<VideoContextBuilder.AsrSeg> transcribeSlice(FfmpegService.AudioChunk chunk, String engine,
+                                                             TranscriptionService.XfCreds xf) {
+        return transcriptionService.transcribe(chunk.path(), chunk.startMs(), engine, xf).stream()
+                .map(s -> new VideoContextBuilder.AsrSeg(s.startMs(), s.endMs(), s.text()))
+                .toList();
     }
 
     /** OCR 分支：断点复用 → 关键帧抽取（场景检测+保底采样+phash 去重）→ 逐帧识别并上传证据帧。失败返回空列表。 */
