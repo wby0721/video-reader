@@ -232,9 +232,20 @@ public class VideoContextService {
                             .map(c -> new TranscriptionService.XfCreds(c.appId(), c.apiKey(), c.apiSecret()))
                             .orElse(null)
                     : null;
-            // 讯飞极速转写：切片放宽到 600s（11~16 分钟视频仅 2 个任务，上传 <30M）；
-            // 账号通常 1 路并发 → 串行转写，避免并发大上传超时导致切片丢失
-            long sliceMs = xfyun ? 600_000L : FfmpegService.AUDIO_SLICE_MS;
+            // 讯飞极速转写：切片大小可配置（本地默认 600s；服务器/跨境链路建议调小，
+            // 如 ASR_XFYUN_SLICE_MS=180000 → ~5.8MB/片，避免大文件上传超时整片丢失）
+            long xfyunSliceMs = 600_000L;
+            if (xfyun) {
+                String env = System.getenv("ASR_XFYUN_SLICE_MS");
+                if (env != null && !env.isBlank()) {
+                    try {
+                        xfyunSliceMs = Long.parseLong(env.trim());
+                    } catch (NumberFormatException ignored) {
+                        // 非法值回退默认
+                    }
+                }
+            }
+            long sliceMs = xfyun ? xfyunSliceMs : FfmpegService.AUDIO_SLICE_MS;
             List<FfmpegService.AudioChunk> chunks = ffmpegService.sliceAudio(wav, sliceMs);
             int concurrency = xfyun ? 1 : Math.min(4, Math.max(1, chunks.size()));
             ExecutorService pool = Executors.newFixedThreadPool(concurrency);
