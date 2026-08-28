@@ -16,15 +16,18 @@ public class SettingsService {
     private static final String KEY_XF_REMAINING_HOURS = "settings:asr:xf-remaining-hours";
 
     private final RedissonClient redisson;
+    /** 默认引擎（Redis 无值时生效）：环境变量 ASR_ENGINE_DEFAULT 可覆盖（服务器部署设 xfyun，本地保持 local）。 */
+    private final String defaultEngine;
 
     public SettingsService(RedissonClient redisson) {
         this.redisson = redisson;
+        this.defaultEngine = "xfyun".equals(System.getenv("ASR_ENGINE_DEFAULT")) ? "xfyun" : "local";
     }
 
     /** 当前 ASR 引擎：local（本地 Qwen3-ASR）/ xfyun（讯飞实时语音转写）。 */
     public String getAsrEngine() {
         Object v = redisson.getBucket(KEY_ASR_ENGINE).get();
-        return v == null ? "local" : String.valueOf(v);
+        return v == null ? defaultEngine : String.valueOf(v);
     }
 
     public void setAsrEngine(String engine) {

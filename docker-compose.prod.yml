@@ -197,6 +197,8 @@ services:
       EMBEDDING_BASE_URL: http://embedding:8000
       ASR_BASE_URL: http://asr:8001
       OCR_BASE_URL: http://ocr:8002
+      # 服务器无本地 ASR 模型 → 默认引擎必须是讯飞（用户可在设置页改为 local 但服务器无法运行）
+      ASR_ENGINE_DEFAULT: xfyun
       # LLM（用户自带 Key 方案：服务器可不配 LLM_API_KEY，用户注册后在设置页提交自己的 Key）
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
       LLM_API_KEY: ${LLM_API_KEY:-}
