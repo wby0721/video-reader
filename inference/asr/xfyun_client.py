@@ -131,7 +131,32 @@ def _upload_small_file(wav_path: str, appid: str, api_key: str, api_secret: str)
     return result["data"]["url"]
 
 
-def _create_task(audio_url: str, appid: str, api_key: str, api_secret: str) -> str:
+def _upload_mp3_file(mp3_path: str, appid: str, api_key: str, api_secret: str) -> str:
+    """上传 MP3（压缩格式，体积小、上传快，避免大 PCM 上传超过签名时效）。"""
+    with open(mp3_path, "rb") as f:
+        data_bytes = f.read()
+    boundary = uuid.uuid4().hex
+    request_id = str(int(time.time() * 1000))
+    body = b"".join([
+        f'--{boundary}\r\nContent-Disposition: form-data; name="request_id"\r\n\r\n{request_id}\r\n'.encode(),
+        f'--{boundary}\r\nContent-Disposition: form-data; name="app_id"\r\n\r\n{appid}\r\n'.encode(),
+        (f'--{boundary}\r\nContent-Disposition: form-data; name="data"; filename="audio.mp3"\r\n'
+         f'Content-Type: audio/mpeg\r\n\r\n').encode() + data_bytes + b'\r\n',
+        f'--{boundary}--\r\n'.encode(),
+    ])
+    headers = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
+    headers["Content-Type"] = f"multipart/form-data; boundary={boundary}"
+    result = _http_json(UPLOAD_URL, headers, body, timeout=180, retries=2)
+    if result.get("code") != 0:
+        raise RuntimeError(f"音频上传失败: {result.get('code')} {result.get('message')}")
+    return result["data"]["url"]
+
+
+def _create_task(audio_url: str, appid: str, api_key: str, api_secret: str,
+                 audio_format: str = "audio/L16;rate=16000", encoding: str | None = "raw") -> str:
+    data = {"audio_url": audio_url, "audio_src": "http", "format": audio_format}
+    if encoding:
+        data["encoding"] = encoding
     body = {
         "common": {"app_id": appid},
         "business": {
@@ -140,12 +165,7 @@ def _create_task(audio_url: str, appid: str, api_key: str, api_secret: str) -> s
             "domain": "pro_ost_ed",
             "accent": "mandarin",
         },
-        "data": {
-            "audio_url": audio_url,
-            "audio_src": "http",
-            "format": "audio/L16;rate=16000",
-            "encoding": "raw",
-        },
+        "data": data,
     }
     result = _post_json(CREATE_URL, OST_HOST, "/v2/ost/pro_create", body, api_key, api_secret)
     if result.get("code") != 0:
@@ -190,13 +210,21 @@ async def transcribe_file(wav_path: str, appid: str, api_key: str, api_secret: s
                                    poll_interval, timeout)
 
 
-def _transcribe_sync(wav_path: str, appid: str, api_key: str, api_secret: str,
+def _transcribe_sync(audio_path: str, appid: str, api_key: str, api_secret: str,
                      poll_interval: float, timeout: float):
+    is_mp3 = audio_path.lower().endswith(".mp3")
     t0 = time.time()
-    url = _upload_small_file(wav_path, appid, api_key, api_secret)
-    print(f"[xfyun] upload {time.time() - t0:.1f}s")
-    t0 = time.time()
-    task_id = _create_task(url, appid, api_key, api_secret)
+    if is_mp3:
+        url = _upload_mp3_file(audio_path, appid, api_key, api_secret)
+        print(f"[xfyun] upload(mp3) {time.time() - t0:.1f}s")
+        t0 = time.time()
+        task_id = _create_task(url, appid, api_key, api_secret,
+                               audio_format="audio/mpeg", encoding=None)
+    else:
+        url = _upload_small_file(audio_path, appid, api_key, api_secret)
+        print(f"[xfyun] upload {time.time() - t0:.1f}s")
+        t0 = time.time()
+        task_id = _create_task(url, appid, api_key, api_secret)
     print(f"[xfyun] create {time.time() - t0:.1f}s task={task_id}")
 
     deadline = time.time() + timeout

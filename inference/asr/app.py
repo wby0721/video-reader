@@ -5,6 +5,7 @@
 引擎选择：请求表单字段 engine（local / xfyun），缺省取环境变量 ASR_ENGINE（默认 local）。
 """
 import os
+import subprocess
 import sys
 import tempfile
 import threading
@@ -81,10 +82,24 @@ async def transcribe(file: UploadFile = File(...), engine: str = Form(ASR_ENGINE
             xf_appid, xf_apikey, xf_apisecret = appid or XF_APPID, apikey or XF_APIKEY, apisecret or XF_APISECRET
             if not (xf_appid and xf_apikey and xf_apisecret):
                 raise HTTPException(400, "未配置讯飞 APPID/APIKey/APISecret（请在个人设置提交，或配置服务端环境变量 XF_APPID / XF_APIKEY / XF_APISECRET）")
+            # 转 MP3 再上传：PCM 体积大、上传慢会超过讯飞签名时效（大文件实测 370s 后 403）
+            # mp3 32kbps 单声道 16k：体积约 1/8，上传快、签名不过期
+            mp3_path = None
             try:
-                raw_segs = await xfyun_client.transcribe_file(path, xf_appid, xf_apikey, xf_apisecret)
+                mp3_path = path + ".mp3"
+                subprocess.run(
+                    ["ffmpeg", "-y", "-i", path, "-ac", "1", "-ar", "16000",
+                     "-codec:a", "libmp3lame", "-b:a", "32k", mp3_path],
+                    check=True, capture_output=True)
+                raw_segs = await xfyun_client.transcribe_file(mp3_path, xf_appid, xf_apikey, xf_apisecret)
             except Exception as e:
                 raise HTTPException(502, f"讯飞极速录音转写失败: {e}") from e
+            finally:
+                if mp3_path:
+                    try:
+                        os.unlink(mp3_path)
+                    except OSError:
+                        pass
             segments = [Segment(start=s["start_ms"] / 1000.0, end=s["end_ms"] / 1000.0, text=s["text"])
                         for s in raw_segs]
             return TranscribeResponse(segments=segments)
