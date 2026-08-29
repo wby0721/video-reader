@@ -255,11 +255,26 @@ def _transcribe_sync(audio_path: str, appid: str, api_key: str, api_secret: str,
         time.sleep(poll_interval)
         try:
             resp = _query_task(task_id, appid, api_key, api_secret)
-        except Exception as e:
-            # 轮询瞬时断连（WAF/网络）→ 打印后继续等待，不放弃任务（任务在讯飞侧仍在处理）
-            print(f"[xfyun] 轮询瞬时失败，继续等待 task={task_id}: {str(e)[:120]}")
+        except _HttpStatusError as e:
+            # HTTP 4xx：若错误体里携带已完成结果（如 20304 + task_status=4 + result）→ 尝试解析
+            body = str(e)
+            try:
+                j = json.loads(body[body.index('{'):])
+            except (ValueError, IndexError):
+                raise
+            if j.get("data", {}).get("task_status") in ("3", "4"):
+                result = j.get("data", {}).get("result") or {}
+                segments = _parse_result(result)
+                print(f"[xfyun] done(status4-with-error) poll={time.time() - t0:.1f}s segs={len(segments)}")
+                if segments:
+                    return segments
+            raise
+        except (ConnectionError, TimeoutError, urllib.error.URLError, OSError) as e:
+            # 仅网络类瞬时错误（WAF 重置/超时）→ 继续等待；业务/HTTP 错误立即抛出，不空转
+            print(f"[xfyun] 轮询瞬时网络失败，继续等待 task={task_id}: {str(e)[:120]}")
             continue
         if resp.get("code") != 0:
+            # 业务错误（如 20304）：任务已结束但结果异常 → 立即抛出，不再空转等待
             raise RuntimeError(f"查询任务失败: {resp.get('code')} {resp.get('message')}")
         status = str(resp.get("data", {}).get("task_status", ""))
         if status in ("3", "4"):  # 处理完成 / 回调完成
