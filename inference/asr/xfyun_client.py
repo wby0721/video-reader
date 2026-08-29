@@ -48,14 +48,21 @@ class _HttpStatusError(RuntimeError):
     """HTTP 业务错误（4xx/5xx）：不重试。"""
 
 
-def _http_json(url: str, headers: dict, body: bytes, timeout: float,
+def _http_json(url: str, headers_factory, body: bytes, timeout: float,
                retries: int = 0, backoff: float = 3.0) -> dict:
-    headers.setdefault("User-Agent", USER_AGENT)
+    """POST 并解析 JSON。headers 由工厂函数每次尝试重新生成——
+    签名含 Date 头，上传慢时旧签名会过期（403），重试必须换新签名。"""
     last_err: Exception | None = None
     for attempt in range(retries + 1):
         try:
-            return _curl_post(url, headers, body, timeout)
-        except _HttpStatusError:
+            return _curl_post(url, headers_factory(), body, timeout)
+        except _HttpStatusError as e:
+            # 403 签名/日期过期 → 换新签名重试（凭据错误等其他 4xx 直接抛出）
+            if e.args and ("signature" in str(e).lower() or "date" in str(e).lower()):
+                last_err = e
+                if attempt < retries:
+                    time.sleep(backoff * (attempt + 1))
+                    continue
             raise
         except Exception as e:  # 网络超时/连接失败 → 重试
             last_err = e
@@ -103,8 +110,13 @@ def _curl_post(url: str, headers: dict, body: bytes, timeout: float) -> dict:
 
 def _post_json(url: str, host: str, path: str, body_obj: dict, api_key: str, api_secret: str) -> dict:
     body = json.dumps(body_obj).encode("utf-8")
-    headers = _build_auth_headers(host, path, body, api_key, api_secret)
-    headers["Content-Type"] = "application/json"
+
+    def headers():
+        h = _build_auth_headers(host, path, body, api_key, api_secret)
+        h["Content-Type"] = "application/json"
+        h["User-Agent"] = USER_AGENT
+        return h
+
     return _http_json(url, headers, body, timeout=60, retries=1)
 
 
@@ -122,9 +134,14 @@ def _upload_small_file(wav_path: str, appid: str, api_key: str, api_secret: str)
          f'Content-Type: application/octet-stream\r\n\r\n').encode() + pcm + b'\r\n',
         f'--{boundary}--\r\n'.encode(),
     ])
-    headers = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
-    headers["Content-Type"] = f"multipart/form-data; boundary={boundary}"
-    # 上传大文件易超时：长超时 + 重试
+
+    def headers():
+        h = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
+        h["Content-Type"] = f"multipart/form-data; boundary={boundary}"
+        h["User-Agent"] = USER_AGENT
+        return h
+
+    # 上传大文件易超时：长超时 + 重试（重试自动刷新签名）
     result = _http_json(UPLOAD_URL, headers, body, timeout=180, retries=2)
     if result.get("code") != 0:
         raise RuntimeError(f"音频上传失败: {result.get('code')} {result.get('message')}")
@@ -144,8 +161,13 @@ def _upload_mp3_file(mp3_path: str, appid: str, api_key: str, api_secret: str) -
          f'Content-Type: audio/mpeg\r\n\r\n').encode() + data_bytes + b'\r\n',
         f'--{boundary}--\r\n'.encode(),
     ])
-    headers = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
-    headers["Content-Type"] = f"multipart/form-data; boundary={boundary}"
+
+    def headers():
+        h = _build_auth_headers(UPLOAD_HOST, "/file/upload", body, api_key, api_secret)
+        h["Content-Type"] = f"multipart/form-data; boundary={boundary}"
+        h["User-Agent"] = USER_AGENT
+        return h
+
     result = _http_json(UPLOAD_URL, headers, body, timeout=180, retries=2)
     if result.get("code") != 0:
         raise RuntimeError(f"音频上传失败: {result.get('code')} {result.get('message')}")
