@@ -26,6 +26,11 @@ QUERY_URL = "https://ost-api.xfyun.cn/v2/ost/query"
 UPLOAD_HOST = "upload-ost-api.xfyun.cn"
 OST_HOST = "ost-api.xfyun.cn"
 
+# 浏览器 UA：讯飞 WAF 对「海外 IP + 无浏览器标识的 Python 请求」会选择性连接重置
+# （本机国内 IP 不触发，服务器海外 IP 必撞；实测加 UA 后请求穿透）
+USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+
 
 def _build_auth_headers(host: str, path: str, body: bytes, api_key: str, api_secret: str) -> dict:
     date = formatdate(time.time(), usegmt=True)
@@ -40,6 +45,7 @@ def _build_auth_headers(host: str, path: str, body: bytes, api_key: str, api_sec
 
 def _http_json(url: str, headers: dict, body: bytes, timeout: float,
                retries: int = 0, backoff: float = 3.0) -> dict:
+    headers.setdefault("User-Agent", USER_AGENT)
     last_err: Exception | None = None
     for attempt in range(retries + 1):
         req = urllib.request.Request(url, data=body, headers=headers, method="POST")
@@ -147,19 +153,30 @@ async def transcribe_file(wav_path: str, appid: str, api_key: str, api_secret: s
 
 def _transcribe_sync(wav_path: str, appid: str, api_key: str, api_secret: str,
                      poll_interval: float, timeout: float):
+    t0 = time.time()
     url = _upload_small_file(wav_path, appid, api_key, api_secret)
+    print(f"[xfyun] upload {time.time() - t0:.1f}s")
+    t0 = time.time()
     task_id = _create_task(url, appid, api_key, api_secret)
+    print(f"[xfyun] create {time.time() - t0:.1f}s task={task_id}")
 
     deadline = time.time() + timeout
+    t0 = time.time()
     while time.time() < deadline:
         time.sleep(poll_interval)
-        resp = _query_task(task_id, appid, api_key, api_secret)
+        try:
+            resp = _query_task(task_id, appid, api_key, api_secret)
+        except Exception as e:
+            # 轮询瞬时断连（WAF/网络）→ 打印后继续等待，不放弃任务（任务在讯飞侧仍在处理）
+            print(f"[xfyun] 轮询瞬时失败，继续等待 task={task_id}: {str(e)[:120]}")
+            continue
         if resp.get("code") != 0:
             raise RuntimeError(f"查询任务失败: {resp.get('code')} {resp.get('message')}")
         status = str(resp.get("data", {}).get("task_status", ""))
         if status in ("3", "4"):  # 处理完成 / 回调完成
             result = resp.get("data", {}).get("result") or {}
             segments = _parse_result(result)
+            print(f"[xfyun] done poll={time.time() - t0:.1f}s segs={len(segments)}")
             if not segments:
                 raise RuntimeError("极速转写返回空结果")
             return segments
