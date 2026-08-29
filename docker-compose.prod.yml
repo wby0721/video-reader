@@ -203,8 +203,10 @@ services:
       OCR_BASE_URL: http://ocr:8002
       # 服务器无本地 ASR 模型 → 默认引擎必须是讯飞（用户可在设置页改为 local 但服务器无法运行）
       ASR_ENGINE_DEFAULT: xfyun
-      # 讯飞切片 3 分钟（~5.8MB/片）：跨境链路上传更稳，避免大切片超时整片丢失
-      ASR_XFYUN_SLICE_MS: "180000"
+      # 讯飞切片 15 分钟（整段一次上传成 1 个任务）：
+      # 官方建议单任务 5 分钟以上音频；11 分钟视频 PCM≈21MB<30M 小文件上限，1 片=1 任务最快
+      # （切片只是 I/O 策略，下游按绝对时间轴合并，片数无语义价值）
+      ASR_XFYUN_SLICE_MS: "900000"
       # LLM（用户自带 Key 方案：服务器可不配 LLM_API_KEY，用户注册后在设置页提交自己的 Key）
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
       LLM_API_KEY: ${LLM_API_KEY:-}
