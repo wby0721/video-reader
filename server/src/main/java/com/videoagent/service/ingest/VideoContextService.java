@@ -296,12 +296,16 @@ public class VideoContextService {
             return List.of();        }
     }
 
-    /** 转写单个音频切片为带时间戳的文本段。 */
+    /** 转写单个音频切片为带时间戳的文本段（记录每片耗时，用于定位讯飞处理瓶颈）。 */
     private List<VideoContextBuilder.AsrSeg> transcribeSlice(FfmpegService.AudioChunk chunk, String engine,
                                                              TranscriptionService.XfCreds xf) {
-        return transcriptionService.transcribe(chunk.path(), chunk.startMs(), engine, xf).stream()
+        long t0 = System.currentTimeMillis();
+        List<VideoContextBuilder.AsrSeg> segs = transcriptionService.transcribe(chunk.path(), chunk.startMs(), engine, xf).stream()
                 .map(s -> new VideoContextBuilder.AsrSeg(s.startMs(), s.endMs(), s.text()))
                 .toList();
+        log.info("切片转写完成 startMs={}ms 耗时={}ms 片段数={}",
+                chunk.startMs(), System.currentTimeMillis() - t0, segs.size());
+        return segs;
     }
 
     /** OCR 分支：断点复用 → 关键帧抽取（场景检测+保底采样+phash 去重）→ 逐帧识别并上传证据帧。失败返回空列表。 */
