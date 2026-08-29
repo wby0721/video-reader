@@ -43,23 +43,61 @@ def _build_auth_headers(host: str, path: str, body: bytes, api_key: str, api_sec
     return {"Host": host, "Date": date, "Digest": digest, "Authorization": auth}
 
 
+class _HttpStatusError(RuntimeError):
+    """HTTP 业务错误（4xx/5xx）：不重试。"""
+
+
 def _http_json(url: str, headers: dict, body: bytes, timeout: float,
                retries: int = 0, backoff: float = 3.0) -> dict:
     headers.setdefault("User-Agent", USER_AGENT)
     last_err: Exception | None = None
     for attempt in range(retries + 1):
-        req = urllib.request.Request(url, data=body, headers=headers, method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            detail = e.read().decode("utf-8", "ignore")[:300]
-            raise RuntimeError(f"HTTP {e.code}: {detail}") from e
+            return _curl_post(url, headers, body, timeout)
+        except _HttpStatusError:
+            raise
         except Exception as e:  # 网络超时/连接失败 → 重试
             last_err = e
             if attempt < retries:
                 time.sleep(backoff * (attempt + 1))
     raise RuntimeError(f"请求失败（重试 {retries} 次）: {last_err}") from last_err
+
+
+def _curl_post(url: str, headers: dict, body: bytes, timeout: float) -> dict:
+    """用 curl 子进程发 POST（绕开 Python ssl 的 TLS 指纹——讯飞 WAF 会选择性重置
+    海外 IP 的 Python 请求，curl 的 TLS 指纹常见放行；body 原样字节传输，Digest 签名不受影响）。"""
+    import subprocess
+    import tempfile
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False) as f:
+            f.write(body)
+            tmp = f.name
+        cmd = ["curl", "-s", "-X", "POST",
+               "--max-time", str(int(timeout)),
+               "-w", "\n%{http_code}",
+               "--data-binary", "@" + tmp,
+               url]
+        for k, v in headers.items():
+            cmd += ["-H", f"{k}: {v}"]
+        proc = subprocess.run(cmd, capture_output=True, timeout=timeout + 30)
+        if proc.returncode != 0:
+            raise ConnectionError(
+                f"curl 失败 rc={proc.returncode}: {proc.stderr.decode('utf-8', 'ignore')[:200]}")
+        out = proc.stdout.decode("utf-8", "ignore")
+        parts = out.rsplit("\n", 1)
+        code_line = parts[1].strip() if len(parts) == 2 else ""
+        http_code = int(code_line) if code_line.isdigit() else 0
+        payload = parts[0] if code_line.isdigit() else out
+        if http_code >= 400:
+            raise _HttpStatusError(f"HTTP {http_code}: {payload[:300]}")
+        return json.loads(payload)
+    finally:
+        if tmp:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
 
 
 def _post_json(url: str, host: str, path: str, body_obj: dict, api_key: str, api_secret: str) -> dict:

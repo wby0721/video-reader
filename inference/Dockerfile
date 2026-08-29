@@ -15,9 +15,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# 系统依赖：ffmpeg（ASR 音频切片）+ OCR 运行库
+# 系统依赖：ffmpeg（ASR 音频切片）+ OCR 运行库 + curl（讯飞客户端走 curl 子进程，绕开 TLS 指纹拦截）
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg libgl1 libglib2.0-0 \
+    && apt-get install -y --no-install-recommends ffmpeg libgl1 libglib2.0-0 curl \
     && rm -rf /var/lib/apt/lists/*
 
 # 依赖：CPU 版 torch + FastAPI 全家桶 + 推理库
