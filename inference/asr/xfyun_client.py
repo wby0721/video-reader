@@ -240,8 +240,9 @@ def _transcribe_sync(audio_path: str, appid: str, api_key: str, api_secret: str,
         url = _upload_mp3_file(audio_path, appid, api_key, api_secret)
         print(f"[xfyun] upload(mp3) {time.time() - t0:.1f}s")
         t0 = time.time()
+        # 官方文档：format 为采样率(audio/L16;rate=16000)，encoding 区分文件格式——mp3 传 "lame"
         task_id = _create_task(url, appid, api_key, api_secret,
-                               audio_format="audio/mpeg", encoding=None)
+                               audio_format="audio/L16;rate=16000", encoding="lame")
     else:
         url = _upload_small_file(audio_path, appid, api_key, api_secret)
         print(f"[xfyun] upload {time.time() - t0:.1f}s")
