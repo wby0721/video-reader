@@ -164,6 +164,31 @@ async function runExplain() {
   }
 }
 
+// 悬浮窗拖拽：在非交互区域按下 → 位移超 4px 判定为拖动，随鼠标移动并夹取在视口内
+function startExplainDrag(e) {
+  const ex = explain.value;
+  if (!ex || e.button !== 0) return;
+  const t = e.target;
+  if (t && t.closest && t.closest('button, a, input, .explain-text')) return; // 按钮/链接/滚动区不拖
+  e.preventDefault(); // 阻止拖动时选中文字
+  const startX = e.clientX, startY = e.clientY;
+  const baseX = ex.x, baseY = ex.y;
+  let dragging = false;
+  const onMove = (ev) => {
+    const dx = ev.clientX - startX, dy = ev.clientY - startY;
+    if (!dragging && Math.abs(dx) + Math.abs(dy) < 4) return; // 防误触：轻微位移不算拖
+    dragging = true;
+    ex.x = Math.min(Math.max(4, baseX + dx), window.innerWidth - 340);
+    ex.y = Math.min(Math.max(4, baseY + dy), window.innerHeight - 220);
+  };
+  const onUp = () => {
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+  };
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+}
+
 function fmt(ms) {
   const s = Math.floor((ms || 0) / 1000);
   const m = Math.floor(s / 60), sec = s % 60;
@@ -317,7 +342,7 @@ async function doDelete() {
             </div>
 
             <!-- 术语解释悬浮窗：选中 ≤100 字转写文本后出现 -->
-            <div v-if="explain" class="explain-pop" :style="{ left: explain.x + 'px', top: explain.y + 'px' }">
+            <div v-if="explain" class="explain-pop" :style="{ left: explain.x + 'px', top: explain.y + 'px' }" @mousedown="startExplainDrag" title="按住可拖动">
               <template v-if="!explain.loading && !explain.result">
                 <div class="explain-quote">「{{ explain.text }}」</div>
                 <button class="btn explain-go" :disabled="explain.loading" @click="runExplain">解释</button>
@@ -417,13 +442,13 @@ h3 { margin: 0 0 12px; }
 .asr-line .ts { color: var(--primary); font-weight: 600; flex-shrink: 0; font-size: 12px; padding-top: 2px; }
 .asr-line .txt { color: var(--text); }
 
-/* 术语解释悬浮窗 */
+/* 术语解释悬浮窗（fixed 定位，可按住拖动） */
 .explain-pop {
   position: fixed; z-index: 90; max-width: 320px; min-width: 220px;
   background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18); padding: 10px 12px;
   display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
-  font-size: 13px;
+  font-size: 13px; cursor: move; user-select: none;
 }
 .explain-quote {
   color: var(--text); font-weight: 600; line-height: 1.5;
@@ -432,7 +457,7 @@ h3 { margin: 0 0 12px; }
 .explain-go { align-self: flex-start; }
 .explain-text {
   margin: 0; color: var(--text); white-space: pre-wrap;
-  line-height: 1.7; max-height: 160px; overflow-y: auto;
+  line-height: 1.7; max-height: 160px; overflow-y: auto; user-select: text;
 }
 .explain-note { margin: 0; font-size: 12px; }
 .btn-link {
