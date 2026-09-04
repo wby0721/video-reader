@@ -211,6 +211,8 @@ services:
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+      # Tavily 联网检索（术语解释用；留空则自动降级为纯视频语境解释）
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
       # 安全必设
       JWT_SECRET: ${JWT_SECRET:?请在 .env 设置 JWT_SECRET（≥32 位随机）}
       LLM_MASTER_KEY: ${LLM_MASTER_KEY:?请在 .env 设置 LLM_MASTER_KEY}
