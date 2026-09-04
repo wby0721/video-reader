@@ -110,8 +110,58 @@ function onLoaded() {
 
 function seekTo(ms) {
   if (!video.value) return;
+  // 若刚从转写面板做了文本选区（双击选词等），先不跳转，避免打断「解释」
+  const sel = window.getSelection && window.getSelection();
+  if (sel && sel.toString().trim().length > 0) { sel.removeAllRanges(); return; }
   video.value.currentTime = ms / 1000;
   video.value.play().catch(() => {});
+}
+
+// ---- 术语解释：选中 ASR 文本 → 视频语境 + Tavily 联网检索 → LLM 融合解释 ----
+const explain = ref(null); // {text, startMs, x, y, loading, result, error, webUsed}
+
+function onAsrMouseUp(ev) {
+  const sel = window.getSelection && window.getSelection();
+  const text = sel ? sel.toString().replace(/\s+/g, ' ').trim() : '';
+  if (!text || text.length > 100) { explain.value = null; return; }
+  // 只允许解释转写面板内的选区（沿 anchorNode 向上找 .asr-line 拿时间戳）
+  let node = sel && sel.anchorNode;
+  let lineEl = null;
+  while (node && node !== document.body) {
+    if (node.classList && node.classList.contains('asr-line')) { lineEl = node; break; }
+    node = node.parentElement;
+  }
+  if (!lineEl) { explain.value = null; return; }
+  const startMs = Number(lineEl.dataset.start) || 0;
+  let x = ev.clientX, y = ev.clientY;
+  try {
+    if (sel.rangeCount) {
+      const r = sel.getRangeAt(0).getBoundingClientRect();
+      if (r && r.right) { x = r.right; y = r.bottom; }
+    }
+  } catch (e) { /* 选区定位失败则退回鼠标位置 */ }
+  // 悬浮窗定位防溢出视口
+  x = Math.min(x, window.innerWidth - 340);
+  y = Math.min(y, window.innerHeight - 220);
+  explain.value = { text, startMs, x: Math.max(4, x), y: Math.max(4, y),
+    loading: false, result: '', error: '', webUsed: false };
+}
+
+async function runExplain() {
+  const ex = explain.value;
+  if (!ex || ex.loading) return;
+  ex.loading = true; ex.error = ''; ex.result = '';
+  try {
+    const data = await api.post('/analysis/explain', {
+      mediaId: Number(mediaId), selectedText: ex.text, contextStartMs: ex.startMs,
+    });
+    ex.result = (data && data.explanation) || '（无返回）';
+    ex.webUsed = !!data.webUsed;
+  } catch (e) {
+    ex.error = e.message;
+  } finally {
+    ex.loading = false;
+  }
 }
 
 function fmt(ms) {
@@ -255,8 +305,8 @@ async function doDelete() {
               <span class="plabel">完整 ASR 转写记录</span>
               <span class="muted">{{ context ? `共 ${asrLines.length} 条（点击定位画面）` : '生成中…' }}</span>
             </div>
-            <div v-if="context" class="asr-box">
-              <div v-for="(l, i) in asrLines" :key="i" class="asr-line" @click="seekTo(l.startMs)">
+            <div v-if="context" class="asr-box" @mouseup="onAsrMouseUp">
+              <div v-for="(l, i) in asrLines" :key="i" class="asr-line" :data-start="l.startMs" @click="seekTo(l.startMs)">
                 <span class="ts">{{ fmt(l.startMs) }}</span>
                 <span class="txt">{{ l.text }}</span>
               </div>
@@ -264,6 +314,26 @@ async function doDelete() {
             </div>
             <div v-else class="loading">
               <span class="spinner"></span> 语音转写生成中，完成后自动显示…
+            </div>
+
+            <!-- 术语解释悬浮窗：选中 ≤100 字转写文本后出现 -->
+            <div v-if="explain" class="explain-pop" :style="{ left: explain.x + 'px', top: explain.y + 'px' }">
+              <template v-if="!explain.loading && !explain.result">
+                <div class="explain-quote">「{{ explain.text }}」</div>
+                <button class="btn explain-go" :disabled="explain.loading" @click="runExplain">解释</button>
+                <button class="btn-link" @click="explain = null">关闭</button>
+              </template>
+              <template v-else-if="explain.loading">
+                <span class="spinner"></span> 正在结合视频语境与联网信息解释…
+              </template>
+              <template v-else>
+                <div class="explain-quote">「{{ explain.text }}」</div>
+                <p class="explain-text">{{ explain.result }}</p>
+                <p class="muted explain-note">
+                  {{ explain.webUsed ? '已结合视频前后语境与联网检索' : '已结合视频前后语境（联网检索不可用，已降级）' }}
+                </p>
+                <button class="btn-link" @click="explain = null">关闭</button>
+              </template>
             </div>
           </div>
 
@@ -346,4 +416,28 @@ h3 { margin: 0 0 12px; }
 .asr-line:hover { background: var(--hover); }
 .asr-line .ts { color: var(--primary); font-weight: 600; flex-shrink: 0; font-size: 12px; padding-top: 2px; }
 .asr-line .txt { color: var(--text); }
+
+/* 术语解释悬浮窗 */
+.explain-pop {
+  position: fixed; z-index: 90; max-width: 320px; min-width: 220px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18); padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+  font-size: 13px;
+}
+.explain-quote {
+  color: var(--text); font-weight: 600; line-height: 1.5;
+  max-height: 96px; overflow-y: auto; word-break: break-all;
+}
+.explain-go { align-self: flex-start; }
+.explain-text {
+  margin: 0; color: var(--text); white-space: pre-wrap;
+  line-height: 1.7; max-height: 160px; overflow-y: auto;
+}
+.explain-note { margin: 0; font-size: 12px; }
+.btn-link {
+  background: none; border: none; color: var(--primary);
+  cursor: pointer; font-size: 12px; padding: 0;
+}
+.btn-link:hover { text-decoration: underline; }
 </style>

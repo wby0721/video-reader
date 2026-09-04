@@ -17,7 +17,8 @@ public record AppProperties(
         RateLimit rateLimit,
         Ai ai,
         Ffmpeg ffmpeg,
-        Llm llm
+        Llm llm,
+        Tavily tavily
 ) {
 
     /** JWT 签发配置 */
@@ -56,4 +57,7 @@ public record AppProperties(
 
     /** 用户 API Key 静态加密主密钥（环境变量 LLM_MASTER_KEY；未配置时回退派生自 JWT secret） */
     public record Llm(String masterKey) {}
+
+    /** Tavily 网页搜索（术语解释的联网检索源，环境变量 TAVILY_API_KEY） */
+    public record Tavily(String baseUrl, String apiKey) {}
 }
