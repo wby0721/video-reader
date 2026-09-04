@@ -168,7 +168,7 @@ try {
 
     # 3) Kafka (9092)
     if (-not (Test-Port 9092)) {
-        Start-Svc -Name kafka -File $Java -ArgList @('-cp', "$KafkaDir\libs\*", 'kafka.Kafka', $KafkaProps) -Port 9092
+        Start-Svc -Name kafka -File $Java -ArgList @('-cp', "$KafkaDir\libs\*;$KafkaDir\config", 'kafka.Kafka', $KafkaProps) -Port 9092
         $null = Wait-Port 9092 90 'Kafka'
     } else { Write-Host "[Kafka] 已在 9092 运行，跳过" -ForegroundColor Yellow }
 
