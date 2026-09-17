@@ -70,6 +70,28 @@ if [ ! -d "$MODEL_DIR" ]; then
     exit 1
 fi
 
+# ---------- 4.1 BGE Reranker 模型（Cross-Encoder 精排） ----------
+RERANKER_MODEL_DIR="data/models/bge-reranker-v2-m3"
+if [ ! -d "$RERANKER_MODEL_DIR" ]; then
+    echo "==> 未找到 bge-reranker-v2-m3，尝试下载..."
+    for ep in "https://huggingface.co" "https://hf-mirror.com"; do
+        echo "==> 尝试模型源: $ep"
+        if docker run --rm \
+            -v "$(pwd)/data/models:/app/models" \
+            -e HF_ENDPOINT="$ep" \
+            video-reader-prod-embedding:latest \
+            python -c "from sentence_transformers import CrossEncoder; CrossEncoder('BAAI/bge-reranker-v2-m3').save('/app/models/bge-reranker-v2-m3')"; then
+            echo "==> bge-reranker-v2-m3 下载完成"
+            break
+        fi
+        echo "!! $ep 失败，尝试下一个..."
+    done
+fi
+if [ ! -d "$RERANKER_MODEL_DIR" ]; then
+    echo "!! Reranker 模型未就绪。请上传到 data/models/bge-reranker-v2-m3 后重跑。"
+    exit 1
+fi
+
 # ---------- 5. 生成自签占位证书（让 nginx 能先启动，随后 certbot 替换） ----------
 mkdir -p data/certbot/conf data/certbot/www
 if [ ! -f data/certbot/conf/live/jasonsweb.xyz/fullchain.pem ]; then

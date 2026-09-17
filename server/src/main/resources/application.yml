@@ -47,6 +47,12 @@ app:
     # 成本护栏：以「一次 LLM 消费动作」为单位（提交分析 / 追问 / 自动标题共用额度）
     user-rps: ${RATE_LIMIT_USER_RPS:2}
     global-rps: ${RATE_LIMIT_GLOBAL_RPS:3}
+  retrieval:
+    # 嵌入式 Lucene：BM25 内容索引与 OCR 字段索引
+    lucene-path: ${LUCENE_INDEX_PATH:./data/lucene-index}
+    # 保守启发式提示阈值，非正确率；默认只提示，不硬拒绝。不得直接套用合成集0.95。
+    min-reranker-score: ${RAG_MIN_RERANKER_SCORE:0.5}
+    reject-low-relevance: ${RAG_REJECT_LOW_RELEVANCE:false}
   ai:
     llm:
       # DeepSeek OpenAI 兼容接口（阶段四起使用）
@@ -65,6 +71,10 @@ app:
     ocr:
       # 本地 PaddleOCR 独立推理服务（阶段二起使用）
       base-url: ${OCR_BASE_URL:http://localhost:8002}
+    reranker:
+      # BGE Cross-Encoder 批量精排服务
+      base-url: ${RERANKER_BASE_URL:http://localhost:8003}
+      read-timeout-ms: ${RERANKER_READ_TIMEOUT_MS:60000}
   ffmpeg:
     # FFmpeg 可执行文件路径（可用环境变量 FFMPEG_PATH 覆盖）
     path: ${FFMPEG_PATH:ffmpeg}

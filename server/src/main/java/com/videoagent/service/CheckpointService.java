@@ -72,6 +72,24 @@ public class CheckpointService {
                 });
     }
 
+    /**
+     * 仅在 Checkpoint 阶段与期望值一致时恢复，避免把 FAILED 的降级载荷
+     * 永久当成成功索引使用。
+     */
+    public <T> Optional<T> loadIfStage(Long mediaId, String name, String expectedStage,
+                                       TypeReference<T> type) {
+        return repository.findByMediaIdAndCheckpointName(mediaId, name)
+                .filter(cp -> expectedStage.equals(cp.getStage()))
+                .map(cp -> {
+                    try {
+                        return objectMapper.readValue(cp.getPayload(), type);
+                    } catch (JsonProcessingException e) {
+                        log.warn("Checkpoint {}/{} 反序列化失败: {}", mediaId, name, e.getMessage());
+                        return null;
+                    }
+                });
+    }
+
     @Transactional
     public void save(Long mediaId, String name, String stage, Object payload) {
         AgentCheckpoint cp = repository.findByMediaIdAndCheckpointName(mediaId, name)

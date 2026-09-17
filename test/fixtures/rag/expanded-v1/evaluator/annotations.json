@@ -1,0 +1,742 @@
+[
+  {
+    "questionId": "video-01-q1",
+    "videoId": "video-01",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "研磨太细时水通过粉层变慢，同一杯可能同时出现苦涩和局部萃取不足。课堂先固定水温与粉水比，只把磨豆机调粗一格，观察流速，而不是一次改三项。"
+  },
+  {
+    "questionId": "video-01-q2",
+    "videoId": "video-01",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "注水时绕小圈并保持水流稳定，水柱直接冲滤纸边缘会绕过咖啡粉。我们的对照是相同总水量，一杯向中心附近注水，另一杯贴边冲，记录两杯入口的浓淡。"
+  },
+  {
+    "questionId": "video-01-q3",
+    "videoId": "video-01",
+    "split": "calibration",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-02-q1",
+    "videoId": "video-02",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "换盆前先看根团而不是只看叶片。根系在盆底盘绕且排水变慢，才考虑更换容器；轻轻托住根团，枯黑软烂的根与健康浅色根要分开辨认，不能用力扯断。"
+  },
+  {
+    "questionId": "video-02-q2",
+    "videoId": "video-02",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "新盆底部必须留排水孔，浇水后托盘的积水要倒掉。盆土表面发白不代表整个根团都干了，用手指检查下层湿度，再决定要不要浇，不能照固定日历灌水。"
+  },
+  {
+    "questionId": "video-02-q3",
+    "videoId": "video-02",
+    "split": "holdout",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-03-q1",
+    "videoId": "video-03",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "清洁链条前把车架支稳，手指远离旋转的齿盘。用布擦掉外层泥沙，再处理链节缝隙，不能一边快速转动曲柄一边用手抠脏东西，抹布也别卷进传动部件。"
+  },
+  {
+    "questionId": "video-03-q2",
+    "videoId": "video-03",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "润滑剂滴在链条滚子部位，缓慢转动让它分布均匀，然后擦掉链片外侧多余油液。外面越油不等于润滑越好，多余油会粘灰，最终形成黑色油泥。"
+  },
+  {
+    "questionId": "video-03-q3",
+    "videoId": "video-03",
+    "split": "calibration",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-04-q1",
+    "videoId": "video-04",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "录音前先关掉明显噪声源，麦克风与电脑风扇拉开距离。录一段安静环境作为底噪样本，检查冰箱启动和窗外车声，不能指望后期把任何噪声都无损去掉。"
+  },
+  {
+    "questionId": "video-04-q2",
+    "videoId": "video-04",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "降噪强度过大会把人声尾音也削掉，听起来像水下说话。先复制轨道，再用短片段比较处理前后，停顿更安静但字尾消失时应降低强度，不只看波形变小。"
+  },
+  {
+    "questionId": "video-04-q3",
+    "videoId": "video-04",
+    "split": "holdout",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-05-q1",
+    "videoId": "video-05",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "快门时间决定运动在画面里累积多久，拍走动的人时过慢会拖影。课堂固定机位与光圈，只改变快门，对照手部轮廓；背景清晰而手模糊，不一定是镜头没对上焦。"
+  },
+  {
+    "questionId": "video-05-q2",
+    "videoId": "video-05",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "光圈变化不仅影响进光量，也影响景深。拍桌上前后摆放的杯子，对焦点固定在前杯，收小光圈后后杯轮廓可能更清楚，但曝光需要同步检查，不能只比较亮暗。"
+  },
+  {
+    "questionId": "video-05-q3",
+    "videoId": "video-05",
+    "split": "calibration",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-06-q1",
+    "videoId": "video-06",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "功能分支用于隔离尚未完成的修改，提交前先看差异和工作区状态。把一个功能拆成可解释的小提交，临时调试输出不要混进去，提交说明应描述改动目的而不是只写更新。"
+  },
+  {
+    "questionId": "video-06-q2",
+    "videoId": "video-06",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "合并冲突表示两边对相同位置的修改无法自动协调，不是随便选一边就结束。先读冲突标记上下文，与同伴确认意图，编辑后运行测试，再把已解决文件加入暂存区。"
+  },
+  {
+    "questionId": "video-06-q3",
+    "videoId": "video-06",
+    "split": "holdout",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-07-q1",
+    "videoId": "video-07",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "索引可以减少部分查询需要扫描的数据，但它也占空间并增加写入维护成本。课堂用图书目录类比，按书名找书方便，却不代表任何条件都能用同一目录快速定位。"
+  },
+  {
+    "questionId": "video-07-q2",
+    "videoId": "video-07",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "复合索引的列顺序要结合查询条件观察，不能只看哪些列经常出现。对照按城市和日期筛选的两种语句，查看执行计划中的访问方式与估计行数，而不是仅看是否写了索引名。"
+  },
+  {
+    "questionId": "video-07-q3",
+    "videoId": "video-07",
+    "split": "calibration",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-08-q1",
+    "videoId": "video-08",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "容器启动后立即退出，要先看退出状态和日志，而不是反复重启掩盖第一现场。演示里配置文件路径写错导致程序无法读取，修正挂载路径后重新验证，不把退出都归因于内存不足。"
+  },
+  {
+    "questionId": "video-08-q2",
+    "videoId": "video-08",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "端口映射连接宿主机端口与容器内部监听端口，程序还必须监听可访问的地址。排查时依次看服务是否启动、内部端口是否正确、映射是否存在，浏览器报错不等于容器一定停止。"
+  },
+  {
+    "questionId": "video-08-q3",
+    "videoId": "video-08",
+    "split": "holdout",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-09-q1",
+    "videoId": "video-09",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "浏览器拿到资源后，可能在有效期内直接使用本地副本，不必每次下载完整内容。演示用开发者工具观察是否发出请求，页面出现得快并不能单独证明服务器处理得快。"
+  },
+  {
+    "questionId": "video-09-q2",
+    "videoId": "video-09",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "协商缓存会带上验证信息询问资源是否变化，未变化时可以返回不带完整资源体的响应。对照资源内容修改前后，观察请求头和响应状态，不能把有请求就理解成一定重新下载了全部文件。"
+  },
+  {
+    "questionId": "video-09-q3",
+    "videoId": "video-09",
+    "split": "calibration",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-10-q1",
+    "videoId": "video-10",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "消费者处理完成但确认消息前中断，恢复后可能再次收到同一消息。课堂把写入动作和确认步骤分开标记，说明收到两次不一定是生产者发了两次，不能默认只会投递一次。"
+  },
+  {
+    "questionId": "video-10-q2",
+    "videoId": "video-10",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "幂等处理让同一业务请求重复到达时不重复产生副作用。演示用业务订单号检查已处理记录，不能只靠本次连接里记住消息，服务重启后临时内存状态会丢失。"
+  },
+  {
+    "questionId": "video-10-q3",
+    "videoId": "video-10",
+    "split": "holdout",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-11-q1",
+    "videoId": "video-11",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "揉面先让干粉充分吸水，再观察面团从粗糙到较光滑的变化。不同面粉吸水表现不同，不能见到粘手就连续补很多粉，课堂先暂停让面团休息，再比较手感。"
+  },
+  {
+    "questionId": "video-11-q2",
+    "videoId": "video-11",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "发酵判断结合体积变化和轻按后的回弹，不能只照墙上时钟。室内温度变化会影响速度，演示把两个面团放在不同位置，记录状态差别，而不是保证固定分钟数就一定完成。"
+  },
+  {
+    "questionId": "video-11-q3",
+    "videoId": "video-11",
+    "split": "calibration",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-12-q1",
+    "videoId": "video-12",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "泥团没有居中时，旋转过程中会左右摆动，手一施力就容易偏。先让泥与转盘牢固贴合，双手稳定支撑，速度与用力配合，不能靠最后修边补救开始的明显偏心。"
+  },
+  {
+    "questionId": "video-12-q2",
+    "videoId": "video-12",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "提拉杯壁时内外手指在相近高度配合，缓慢向上移动。局部拉得太薄容易塌，遇到阻力先检查润滑和泥的状态，不要突然加力，演示保留了一只失败杯作对照。"
+  },
+  {
+    "questionId": "video-12-q3",
+    "videoId": "video-12",
+    "split": "holdout",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-13-q1",
+    "videoId": "video-13",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "纸面含水程度影响颜料扩散，刚刷满水和稍等片刻得到的边缘不同。课堂用斜光看水光，再落同一颜色，不把所有晕开都叫失控，先确认想要硬边还是软边。"
+  },
+  {
+    "questionId": "video-13-q2",
+    "videoId": "video-13",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "两种颜色混合时先在调色盘做小样，过度来回搅和容易失去层次。笔上残留的旧颜色会改变混色结果，清洗后吸去多余水分，再比较，不只盯着颜料管的色名。"
+  },
+  {
+    "questionId": "video-13-q3",
+    "videoId": "video-13",
+    "split": "calibration",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-14-q1",
+    "videoId": "video-14",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "打磨前先把木料固定，检查边缘有没有突出的钉子。沿纹理方向进行轻压往复，戴好适合环境的防护，课堂使用已准备好的练习块，不在手持不稳的情况下追求速度。"
+  },
+  {
+    "questionId": "video-14-q2",
+    "videoId": "video-14",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "砂纸由较粗逐步换到较细，用来去掉上一阶段留下的划痕。不能把跳过中间步骤理解成省时间，先清理粉尘再侧光观察，表面摸着滑不代表所有粗划痕都消失。"
+  },
+  {
+    "questionId": "video-14-q3",
+    "videoId": "video-14",
+    "split": "holdout",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-15-q1",
+    "videoId": "video-15",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "行李先按途中会用与到达后才用分组，证件和常用物品放容易取的位置。列清单后再装包，不能因为箱子还有空间就不断添东西，课堂用一次短途行程做虚构例子。"
+  },
+  {
+    "questionId": "video-15-q2",
+    "videoId": "video-15",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "衣物按搭配组合减少重复，容易皱的和耐折叠的分开处理。把几天的组合铺开检查，比单件觉得都喜欢更容易发现多带，洗换条件会影响数量，不存在所有旅行通用件数。"
+  },
+  {
+    "questionId": "video-15-q3",
+    "videoId": "video-15",
+    "split": "calibration",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-16-q1",
+    "videoId": "video-16",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "检索前把研究问题拆成主题词与同义表达，先查宽一些再缩小范围。只输入完整口语句可能遗漏不同用词的资料，课堂把同一主题换几种说法观察结果变化。"
+  },
+  {
+    "questionId": "video-16-q2",
+    "videoId": "video-16",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "筛选资料时同时看出版时间、作者背景与文献类型，相关不等于可靠。综述适合建立背景，原始研究用于核对具体实验，不能只看标题里有关键词就直接引用结论。"
+  },
+  {
+    "questionId": "video-16-q3",
+    "videoId": "video-16",
+    "split": "holdout",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-17-q1",
+    "videoId": "video-17",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "会议记录先区分事实、提议和已经确认的决议，讨论过不等于决定执行。有人提出设想时注明待确认，记录责任人与后续核对渠道，不把声音最大的人说的话直接写成一致结论。"
+  },
+  {
+    "questionId": "video-17-q2",
+    "videoId": "video-17",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "行动项应写清要做什么、由谁负责和何时回看，模糊的尽快处理无法跟踪。会后让相关人确认措辞，依赖别人提供资料的任务要标注前置条件，而不只是堆一串姓名。"
+  },
+  {
+    "questionId": "video-17-q3",
+    "videoId": "video-17",
+    "split": "calibration",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-18-q1",
+    "videoId": "video-18",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "拣货前核对订单和货位编码，外观相似的商品不能靠包装颜色判断。演示把两种规格放在相邻位置，逐项看标识与数量，发现标识不清先暂停确认，不凭记忆拿货。"
+  },
+  {
+    "questionId": "video-18-q2",
+    "videoId": "video-18",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 0,
+        "endMs": 300000
+      }
+    ],
+    "reason": "复核时将实物、清单与扫描结果对应起来，漏扫和重复扫描要分别处理。数量相同不代表品类正确，课堂让另一人交叉检查，发现差异记录来源而不是直接改清单凑一致。"
+  },
+  {
+    "questionId": "video-18-q3",
+    "videoId": "video-18",
+    "split": "holdout",
+    "related": false,
+    "category": "hard-negative",
+    "supportIntervals": [],
+    "reason": "视频没有给出所问具体信息；主题相近不等于可回答。"
+  },
+  {
+    "questionId": "video-19-q1",
+    "videoId": "video-19",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "粗剪先围绕表达结构保留主要论点，再处理长停顿与明显重复。不是所有嗯啊都要删，适当呼吸能保留自然节奏，连续删除后要整段试听，防止语意突然跳跃。"
+  },
+  {
+    "questionId": "video-19-q2",
+    "videoId": "video-19",
+    "split": "calibration",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 900000,
+        "endMs": 1200000
+      }
+    ],
+    "reason": "剪接点附近要听背景底噪是否突然变化，必要时做短交叉淡化。波形接上不代表听感自然，先用耳机听再用扬声器检查，不能只追求时间轴上没有空隙。"
+  },
+  {
+    "questionId": "video-19-q3",
+    "videoId": "video-19",
+    "split": "calibration",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  },
+  {
+    "questionId": "video-20-q1",
+    "videoId": "video-20",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 300000,
+        "endMs": 600000
+      }
+    ],
+    "reason": "等高线连接相同高度的位置，相邻线越密通常表示坡越陡。先核对图例与等高距，再比较同一张图的疏密，不能直接拿两张不同比例尺地图的线条距离下结论。"
+  },
+  {
+    "questionId": "video-20-q2",
+    "videoId": "video-20",
+    "split": "holdout",
+    "related": true,
+    "category": "answerable",
+    "supportIntervals": [
+      {
+        "startMs": 600000,
+        "endMs": 900000
+      }
+    ],
+    "reason": "规划路线时直线距离短不一定行走轻松，还要看坡度和能否通行。课堂比较绕缓坡与直接上陡坡的两条虚构路线，观察累计爬升，不把纸上连线当成现场安全保证。"
+  },
+  {
+    "questionId": "video-20-q3",
+    "videoId": "video-20",
+    "split": "holdout",
+    "related": false,
+    "category": "off-topic",
+    "supportIntervals": [],
+    "reason": "视频未涉及这个跨主题问题。"
+  }
+]

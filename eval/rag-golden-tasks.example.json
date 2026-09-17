@@ -1,0 +1,21 @@
+[
+  {
+    "query": "视频中如何解释 TCP 三次握手？",
+    "userId": 1,
+    "mediaId": 10,
+    "scope": "SINGLE_MEDIA",
+    "expectedChunkIds": ["用实际索引生成的 chunkId 替换"],
+    "expectedTimeRanges": [{"startMs": 100000, "endMs": 180000}],
+    "forbiddenMediaIds": [11],
+    "isAnswerable": true
+  },
+  {
+    "query": "库中没有出现过的主题",
+    "userId": 1,
+    "scope": "USER_ALL",
+    "expectedChunkIds": [],
+    "expectedTimeRanges": [],
+    "forbiddenMediaIds": [],
+    "isAnswerable": false
+  }
+]

@@ -25,7 +25,15 @@ public class AgentTelemetry {
     public void stage(String name, long durationMs, int llmCalls, long tokensEstimate) {
         RunTrace trace = current.get();
         if (trace != null) {
-            trace.stages().add(new StageTrace(name, durationMs, llmCalls, tokensEstimate));
+            trace.stages().add(new StageTrace(name, durationMs, llmCalls, tokensEstimate, 0));
+        }
+    }
+
+    /** 记录一次逻辑检索阶段；queryCount 是该阶段实际未命中缓存的查询数。 */
+    public void retrievalStage(String name, long durationMs, int queryCount) {
+        RunTrace trace = current.get();
+        if (trace != null) {
+            trace.stages().add(new StageTrace(name, durationMs, 0, 0, queryCount > 0 ? 1 : 0));
         }
     }
 
@@ -49,8 +57,13 @@ public class AgentTelemetry {
         public long totalTokensEstimate() {
             return stages.stream().mapToLong(StageTrace::tokensEstimate).sum();
         }
+
+        public int totalRetrievalBatches() {
+            return stages.stream().mapToInt(StageTrace::retrievalBatches).sum();
+        }
     }
 
     /** 单阶段追踪。 */
-    public record StageTrace(String stage, long durationMs, int llmCalls, long tokensEstimate) {}
+    public record StageTrace(String stage, long durationMs, int llmCalls,
+                             long tokensEstimate, int retrievalBatches) {}
 }

@@ -35,17 +35,28 @@ public class EmbeddingClient {
 
     /** 计算单段文本的向量。 */
     public List<Float> embed(String text) {
+        return embedAll(List.of(text)).getFirst();
+    }
+
+    /** 批量计算向量，减少索引阶段逐 Chunk HTTP 往返。 */
+    public List<List<Float>> embedAll(List<String> texts) {
+        if (texts == null || texts.isEmpty()) {
+            return List.of();
+        }
         EmbeddingResponse response = restClient.post()
                 .uri("/embeddings")
                 .header("Authorization", "Bearer " + apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("model", model, "input", List.of(text)))
+                .body(Map.of("model", model, "input", texts))
                 .retrieve()
                 .body(EmbeddingResponse.class);
-        if (response == null || response.data().isEmpty() || response.data().get(0).embedding() == null) {
+        if (response == null || response.data() == null || response.data().size() != texts.size()
+                || response.data().stream().anyMatch(item -> item.embedding() == null)) {
             throw new IllegalStateException("Embedding 响应为空或格式异常");
         }
-        return response.data().get(0).embedding().stream().map(Double::floatValue).toList();
+        return response.data().stream()
+                .map(item -> item.embedding().stream().map(Double::floatValue).toList())
+                .toList();
     }
 
     public int dimensions() {

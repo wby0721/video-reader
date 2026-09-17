@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "indexVersion": 2,
+  "annotationPolicy": "每题按回答价值人工排序 Top7；relevance=3 为直接答案，2 为关键支撑，1 为上下文或对比材料。",
+  "videos": [
+    {
+      "fixture": "20min",
+      "mediaId": 900020,
+      "userId": 7,
+      "contentHash": "ed71ab902e50825af242646596322410b86b1b89443b392a5047f63dc61b1d2f",
+      "title": "Redis 缓存设计测试视频",
+      "questions": [
+        {
+          "turn": 1,
+          "userQuestion": "缓存穿透怎么处理？",
+          "standaloneQuery": "缓存穿透 不存在的数据 布隆过滤器 空值缓存",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "c84e12df639043f5270fa9ea01011e1604a2c6fe25a683cb44e7619c263d6fe7", "startMs": 225000, "endMs": 326000, "relevance": 3, "reason": "直接解释缓存穿透、空值缓存与布隆过滤器"},
+            {"rank": 2, "chunkId": "57112671f40c55f4db4c270613152890ef85c88203e759038df4bf53f08e3b4d", "startMs": 300000, "endMs": 393000, "relevance": 2, "reason": "给出缓存击穿，可用于区分相邻故障模式"},
+            {"rank": 3, "chunkId": "fa8879990e98e35b394e6f3320c3a311a9b3af0799cf03e85556f8ef47d7a30a", "startMs": 375000, "endMs": 480000, "relevance": 2, "reason": "给出雪崩防护，与穿透形成故障保护全景"},
+            {"rank": 4, "chunkId": "a0c37a5d11ede514c9d99a2aa1261f54c79a367d3529793b00105e26171a76a1", "startMs": 450000, "endMs": 540000, "relevance": 1, "reason": "TTL 与逻辑过期的补充上下文"},
+            {"rank": 5, "chunkId": "78246d7cfe713c7434e05645a18356e104eb882083756eb144300806aca0421c", "startMs": 150000, "endMs": 240000, "relevance": 1, "reason": "缓存命中率和数据库压力的前置上下文"},
+            {"rank": 6, "chunkId": "999d89b9022000cc7f63293ab96f3bb2ea686c44ff45bab03b6140e730f17a3f", "startMs": 0, "endMs": 120000, "relevance": 1, "reason": "缓存与数据库职责的基础背景"},
+            {"rank": 7, "chunkId": "4fb4325b02e16c7e0473480cbd9c6eb5354901d495e13c21451cd1e486b0e107", "startMs": 75000, "endMs": 180000, "relevance": 1, "reason": "键空间和过期时间的基础背景"}
+          ]
+        },
+        {
+          "turn": 2,
+          "userQuestion": "那它和缓存击穿有什么区别？",
+          "standaloneQuery": "缓存穿透和缓存击穿的区别 不存在的数据 热点键过期",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "c84e12df639043f5270fa9ea01011e1604a2c6fe25a683cb44e7619c263d6fe7", "startMs": 225000, "endMs": 326000, "relevance": 3, "reason": "同一块连续给出穿透定义与击穿开头，最适合直接比较"},
+            {"rank": 2, "chunkId": "57112671f40c55f4db4c270613152890ef85c88203e759038df4bf53f08e3b4d", "startMs": 300000, "endMs": 393000, "relevance": 3, "reason": "完整解释热点键过期、单键互斥重建"},
+            {"rank": 3, "chunkId": "78246d7cfe713c7434e05645a18356e104eb882083756eb144300806aca0421c", "startMs": 150000, "endMs": 240000, "relevance": 1, "reason": "命中率和数据库压力的前置上下文"},
+            {"rank": 4, "chunkId": "fa8879990e98e35b394e6f3320c3a311a9b3af0799cf03e85556f8ef47d7a30a", "startMs": 375000, "endMs": 480000, "relevance": 2, "reason": "雪崩作为第三种相邻故障模式的对比"},
+            {"rank": 5, "chunkId": "a0c37a5d11ede514c9d99a2aa1261f54c79a367d3529793b00105e26171a76a1", "startMs": 450000, "endMs": 540000, "relevance": 1, "reason": "TTL 策略支撑热点键过期讨论"},
+            {"rank": 6, "chunkId": "999d89b9022000cc7f63293ab96f3bb2ea686c44ff45bab03b6140e730f17a3f", "startMs": 0, "endMs": 120000, "relevance": 1, "reason": "缓存作为非数据真源的基础背景"},
+            {"rank": 7, "chunkId": "4fb4325b02e16c7e0473480cbd9c6eb5354901d495e13c21451cd1e486b0e107", "startMs": 75000, "endMs": 180000, "relevance": 1, "reason": "键与过期时间的基础背景"}
+          ]
+        },
+        {
+          "turn": 3,
+          "userQuestion": "如果是大量键一起过期呢？",
+          "standaloneQuery": "缓存雪崩 大量键同时过期 TTL随机抖动 限流 熔断",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "fa8879990e98e35b394e6f3320c3a311a9b3af0799cf03e85556f8ef47d7a30a", "startMs": 375000, "endMs": 480000, "relevance": 3, "reason": "直接给出 TTL 抖动、限流、熔断、本地缓存和降级"},
+            {"rank": 2, "chunkId": "57112671f40c55f4db4c270613152890ef85c88203e759038df4bf53f08e3b4d", "startMs": 300000, "endMs": 393000, "relevance": 3, "reason": "直接定义大量键同时失效形成缓存雪崩"},
+            {"rank": 3, "chunkId": "a0c37a5d11ede514c9d99a2aa1261f54c79a367d3529793b00105e26171a76a1", "startMs": 450000, "endMs": 540000, "relevance": 3, "reason": "详细说明基础 TTL 加随机数和逻辑过期"},
+            {"rank": 4, "chunkId": "c84e12df639043f5270fa9ea01011e1604a2c6fe25a683cb44e7619c263d6fe7", "startMs": 225000, "endMs": 326000, "relevance": 2, "reason": "穿透、击穿作为雪崩的对比故障模式"},
+            {"rank": 5, "chunkId": "70ecef4fd9b843580c81a5732719f5b60ca9b16645543027b7878c5d1d341376", "startMs": 525000, "endMs": 633000, "relevance": 1, "reason": "淘汰与过期后的缓存策略上下文"},
+            {"rank": 6, "chunkId": "4d64b3b5aa2b97cd21be27bf0c2d9787e2299a10f4fa9a47f0e7e95fa2d209d8", "startMs": 1125000, "endMs": 1200000, "relevance": 1, "reason": "结尾总结明确回顾穿透、击穿、雪崩"},
+            {"rank": 7, "chunkId": "78246d7cfe713c7434e05645a18356e104eb882083756eb144300806aca0421c", "startMs": 150000, "endMs": 240000, "relevance": 1, "reason": "数据库压力与命中率背景"}
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "40min",
+      "mediaId": 900040,
+      "userId": 7,
+      "contentHash": "77779ccb824803476e788e7e73594dcf92cd4e29a77a828e4c81709d6bce6c10",
+      "title": "网络分层与故障排查测试视频",
+      "questions": [
+        {
+          "turn": 1,
+          "userQuestion": "反向代理出现 502 和 504 分别意味着什么，应该怎么排查？",
+          "standaloneQuery": "反向代理 502 五百零二 504 五百零四 上游连接失败 无效响应 超时 日志 排查",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "44264d55e3c10f70f0cc967a766822ca83b142499d867977350856f93a668a04", "startMs": 1425000, "endMs": 1526000, "relevance": 3, "reason": "直接区分 502 上游失败/无效响应与 504 上游超时"},
+            {"rank": 2, "chunkId": "1f399b9a2ca91f850b3f167616d332e509df618e02e72ff0737d65934b6fa70b", "startMs": 1500000, "endMs": 1593000, "relevance": 3, "reason": "健康检查与分层超时配置"},
+            {"rank": 3, "chunkId": "576c6714c0ff2f0664f99b0993f5561353ef90244f9f36c578987bf8f541a15c", "startMs": 2025000, "endMs": 2131000, "relevance": 3, "reason": "502 上游拒绝连接的完整真实案例"},
+            {"rank": 4, "chunkId": "c5360309dc7143bed90236f410b70c4242cd0ba5108d145719f94f1036c79cad", "startMs": 600000, "endMs": 691000, "relevance": 2, "reason": "RST、主机可达与端口拒绝连接的诊断依据"},
+            {"rank": 5, "chunkId": "7fe3b6de0496714b4e6b473d1858aa6ec5433ec9aab68c99f14d35e033547961", "startMs": 1575000, "endMs": 1680000, "relevance": 2, "reason": "分层超时和重试风暴的补充"},
+            {"rank": 6, "chunkId": "149a1d06871ee817f21c9b3f529166d52673010c2484bd7ba5a1098567456937", "startMs": 1800000, "endMs": 1891000, "relevance": 2, "reason": "指标、日志、链路追踪与延迟分解"},
+            {"rank": 7, "chunkId": "ef0df12576f07e156d60aa6d02809a90985b089eb7a46394495509d3928f4c2c", "startMs": 1950000, "endMs": 2040000, "relevance": 1, "reason": "抓包方法和案例化排障上下文"}
+          ]
+        },
+        {
+          "turn": 2,
+          "userQuestion": "如果应用主机能 ping 通，但代理仍提示上游连接被拒绝呢？",
+          "standaloneQuery": "接口502 五百零二 应用主机ping通 代理上游连接被拒绝 目标端口没有进程监听",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "576c6714c0ff2f0664f99b0993f5561353ef90244f9f36c578987bf8f541a15c", "startMs": 2025000, "endMs": 2131000, "relevance": 3, "reason": "与问题完全一致的主机可 ping、端口无人监听案例"},
+            {"rank": 2, "chunkId": "c5360309dc7143bed90236f410b70c4242cd0ba5108d145719f94f1036c79cad", "startMs": 600000, "endMs": 691000, "relevance": 3, "reason": "明确说明 RST 表示主机可达但目标端口未接受连接"},
+            {"rank": 3, "chunkId": "44264d55e3c10f70f0cc967a766822ca83b142499d867977350856f93a668a04", "startMs": 1425000, "endMs": 1526000, "relevance": 3, "reason": "502 与上游访问失败的通用解释"},
+            {"rank": 4, "chunkId": "1f399b9a2ca91f850b3f167616d332e509df618e02e72ff0737d65934b6fa70b", "startMs": 1500000, "endMs": 1593000, "relevance": 2, "reason": "健康检查必须覆盖真实服务依赖"},
+            {"rank": 5, "chunkId": "5f759eee783bb956e847c7d86b3bc9b89201ac71bcbfcf5ed52f518f03dfc0f9", "startMs": 300000, "endMs": 393000, "relevance": 2, "reason": "IP、网关、ping 等网络层诊断上下文"},
+            {"rank": 6, "chunkId": "93073c7b83960e6140250d4eac3fe3e7586b56a517e01f38fff25b6099277c55", "startMs": 375000, "endMs": 480000, "relevance": 2, "reason": "ICMP 可达不等于 TCP 业务端口可用"},
+            {"rank": 7, "chunkId": "ef0df12576f07e156d60aa6d02809a90985b089eb7a46394495509d3928f4c2c", "startMs": 1950000, "endMs": 2040000, "relevance": 1, "reason": "抓包确认 RST、地址和端口的排障方法"}
+          ]
+        },
+        {
+          "turn": 3,
+          "userQuestion": "那健康检查和发布流程应该怎么改，还要怎么告警？",
+          "standaloneQuery": "502 修复 健康检查真实业务端口 发布失败停止注册实例 upstream connect error 单独告警",
+          "expectedTop7": [
+            {"rank": 1, "chunkId": "576c6714c0ff2f0664f99b0993f5561353ef90244f9f36c578987bf8f541a15c", "startMs": 2025000, "endMs": 2131000, "relevance": 3, "reason": "直接给出健康检查、发布失败摘除与 upstream 告警方案"},
+            {"rank": 2, "chunkId": "1f399b9a2ca91f850b3f167616d332e509df618e02e72ff0737d65934b6fa70b", "startMs": 1500000, "endMs": 1593000, "relevance": 3, "reason": "详细说明负载均衡健康检查路径设计"},
+            {"rank": 3, "chunkId": "44264d55e3c10f70f0cc967a766822ca83b142499d867977350856f93a668a04", "startMs": 1425000, "endMs": 1526000, "relevance": 2, "reason": "反向代理职责、日志和上游错误背景"},
+            {"rank": 4, "chunkId": "149a1d06871ee817f21c9b3f529166d52673010c2484bd7ba5a1098567456937", "startMs": 1800000, "endMs": 1891000, "relevance": 2, "reason": "结构化日志、指标、追踪和告警依据"},
+            {"rank": 5, "chunkId": "e499312f3979cac961618b45c72fee3ae7dd9eacd58bb8b66a383ebb14889f35", "startMs": 1725000, "endMs": 1833000, "relevance": 2, "reason": "熔断、降级与可观测性保护措施"},
+            {"rank": 6, "chunkId": "c5360309dc7143bed90236f410b70c4242cd0ba5108d145719f94f1036c79cad", "startMs": 600000, "endMs": 691000, "relevance": 2, "reason": "端口拒绝连接的底层诊断依据"},
+            {"rank": 7, "chunkId": "ef0df12576f07e156d60aa6d02809a90985b089eb7a46394495509d3928f4c2c", "startMs": 1950000, "endMs": 2040000, "relevance": 1, "reason": "抓包与案例复盘的补充上下文"}
+          ]
+        }
+      ]
+    }
+  ]
+}

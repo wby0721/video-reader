@@ -26,6 +26,7 @@ $Java      = "$JavaHome\bin\java.exe"
 $Mysqld    = 'E:\mysql-26.7.0-winx64\bin\mysqld.exe'
 $MysqlCli  = 'E:\mysql-26.7.0-winx64\bin\mysql.exe'
 $Redis     = "$Tools\redis-native\redis-server.exe"
+$RedisCli  = "$Tools\redis-native\redis-cli.exe"
 $KafkaDir  = "$Tools\kafka_2.13-3.8.0"
 $KafkaProps= "$Tools\kraft-server.properties"
 $Minio     = "$Tools\minio.exe"
@@ -86,8 +87,16 @@ function Start-Svc {
         [Environment]::SetEnvironmentVariable($k, [string]$Env[$k])
     }
     $out = "$Logs\$Name.log"; $err = "$Logs\$Name.err.log"
-    $p = Start-Process -FilePath $File -ArgumentList $ArgList -PassThru -WindowStyle Hidden `
-        -RedirectStandardOutput $out -RedirectStandardError $err
+    # Windows PowerShell 5.1 不接受 -ArgumentList @()；Redis 等无参数服务必须省略该参数。
+    $startArgs = @{
+        FilePath = $File
+        PassThru = $true
+        WindowStyle = 'Hidden'
+        RedirectStandardOutput = $out
+        RedirectStandardError = $err
+    }
+    if ($ArgList -and $ArgList.Count -gt 0) { $startArgs.ArgumentList = $ArgList }
+    $p = Start-Process @startArgs
     foreach ($k in $Env.Keys) {
         if ($null -eq $old[$k]) { [Environment]::SetEnvironmentVariable($k, $null) }
         else { [Environment]::SetEnvironmentVariable($k, $old[$k]) }
@@ -116,6 +125,63 @@ function Wait-Http([string]$Url, [int]$Seconds = 60, [string]$Name = $Url) {
         Start-Sleep -Seconds 2
     }
     Write-Host "  [$Name] 等待超时" -ForegroundColor Red
+    return $false
+}
+
+# 端口监听只说明“有进程”，不能证明它就是可用的 Redis。后端初始化 Redisson 前
+# 必须用 Redis 协议 PING 复核，避免把短暂/错误的 6379 监听误判为已就绪。
+function Test-RedisReady {
+    if (-not (Test-Path $RedisCli)) { return $false }
+    try {
+        $reply = & $RedisCli -h 127.0.0.1 -p 6379 ping 2>$null
+        return ($LASTEXITCODE -eq 0 -and (($reply | Out-String).Trim() -eq 'PONG'))
+    } catch { return $false }
+}
+
+function Wait-Redis([int]$Seconds = 30) {
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    while ($sw.Elapsed.TotalSeconds -lt $Seconds) {
+        if (Test-RedisReady) {
+            Write-Host "  [Redis] 就绪 (PING=PONG)" -ForegroundColor Green
+            return $true
+        }
+        Start-Sleep -Seconds 1
+    }
+    Write-Host "  [Redis] 等待超时（未收到 PONG）" -ForegroundColor Red
+    return $false
+}
+
+function Test-StartedServiceAlive([string]$Name) {
+    $service = $started | Where-Object { $_.Name -eq $Name } | Select-Object -Last 1
+    if (-not $service) { return $true }
+    return $null -ne (Get-Process -Id $service.Pid -ErrorAction SilentlyContinue)
+}
+
+function Show-ServiceLogs([string]$Name, [int]$Lines = 35) {
+    foreach ($path in @("$Logs\$Name.log", "$Logs\$Name.err.log")) {
+        if (Test-Path $path) {
+            Write-Host "--- $path ---" -ForegroundColor DarkYellow
+            Get-Content $path -Tail $Lines -ErrorAction SilentlyContinue | Write-Host
+        }
+    }
+}
+
+function Wait-ServiceHttp([string]$Url, [int]$Seconds, [string]$Name, [string]$ServiceName) {
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    while ($sw.Elapsed.TotalSeconds -lt $Seconds) {
+        try {
+            $r = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 3
+            if ($r.StatusCode -eq 200) { Write-Host "  [$Name] 就绪" -ForegroundColor Green; return $true }
+        } catch {}
+        if (-not (Test-StartedServiceAlive $ServiceName)) {
+            Write-Host "  [$Name] 进程已提前退出" -ForegroundColor Red
+            Show-ServiceLogs $ServiceName
+            return $false
+        }
+        Start-Sleep -Seconds 2
+    }
+    Write-Host "  [$Name] 等待超时" -ForegroundColor Red
+    Show-ServiceLogs $ServiceName
     return $false
 }
 
@@ -160,11 +226,14 @@ try {
         Remove-Item Env:\MYSQL_PWD -ErrorAction SilentlyContinue
     } else { Write-Host "[MySQL] 已在 3307 运行，跳过" -ForegroundColor Yellow }
 
-    # 2) Redis (6379)
-    if (-not (Test-Port 6379)) {
+    # 2) Redis (6379)：必须协议级 PING 成功，不能仅按端口跳过。
+    if (-not (Test-RedisReady)) {
+        if (Test-Port 6379) {
+            throw '6379 端口已被占用，但 Redis PING 失败；请先检查该端口占用进程'
+        }
         Start-Svc -Name redis -File $Redis -Port 6379
-        $null = Wait-Port 6379 30 'Redis'
-    } else { Write-Host "[Redis] 已在 6379 运行，跳过" -ForegroundColor Yellow }
+        if (-not (Wait-Redis 30)) { throw 'Redis failed to start' }
+    } else { Write-Host "[Redis] 已在 6379 运行且 PING 正常，跳过" -ForegroundColor Yellow }
 
     # 3) Kafka (9092)
     if (-not (Test-Port 9092)) {
@@ -185,13 +254,15 @@ try {
         $null = Wait-Http 'http://localhost:6333/readyz' 30 'Qdrant'
     } else { Write-Host "[Qdrant] 已在 6333 运行，跳过" -ForegroundColor Yellow }
 
-    # 6) 推理服务 (embedding 8000 / asr 8001 / ocr 8002)
+    # 6) 推理服务 (embedding 8000 / asr 8001 / ocr 8002 / reranker 8003)
     if (-not (Test-Port 8000)) { Start-Svc -Name embedding -File $Py -ArgList @("$Root\video_reader\inference\embedding\app.py") -Port 8000 }
     if (-not (Test-Port 8001)) { Start-Svc -Name asr -File $Py -ArgList @("$Root\video_reader\inference\asr\app.py") -Port 8001 -Env @{ XF_APPID = $EnvXfAppid; XF_APIKEY = $EnvXfApikey; XF_APISECRET = $EnvXfSecret } }
     if (-not (Test-Port 8002)) { Start-Svc -Name ocr -File $Py -ArgList @("$Root\video_reader\inference\ocr\app.py") -Port 8002 }
-    $null = Wait-Http 'http://localhost:8000/health' 60 'embedding'
-    $null = Wait-Http 'http://localhost:8001/health' 60 'asr'
-    $null = Wait-Http 'http://localhost:8002/health' 60 'ocr'
+    if (-not (Test-Port 8003)) { Start-Svc -Name reranker -File $Py -ArgList @("$Root\video_reader\inference\reranker\app.py") -Port 8003 }
+    if (-not (Wait-ServiceHttp 'http://localhost:8000/health' 180 'embedding' 'embedding')) { throw 'embedding failed to start' }
+    if (-not (Wait-ServiceHttp 'http://localhost:8001/health' 60 'asr' 'asr')) { throw 'asr failed to start' }
+    if (-not (Wait-ServiceHttp 'http://localhost:8002/health' 60 'ocr' 'ocr')) { throw 'ocr failed to start' }
+    if (-not (Wait-ServiceHttp 'http://localhost:8003/health' 180 'reranker' 'reranker')) { throw 'reranker failed to start' }
     # OCR GPU 提示（可选加速）：未装 onnxruntime-gpu 时为 CPU 推理
     try {
         $ocrCuda = & $Py -c "import onnxruntime as ort; print('CUDAExecutionProvider' in ort.get_available_providers())" 2>$null
@@ -203,6 +274,9 @@ try {
 
     # 7) 后端 (8081)
     if (-not (Test-Port 8081)) {
+        # Redis 可能由脚本外部进程提供；在启动后端前再次检查，避免它在前序服务
+        # 预热期间退出，最终只看到模糊的 backend timeout。
+        if (-not (Wait-Redis 10)) { throw 'Redis became unavailable before backend startup' }
         if (-not (Test-Path $Jar)) { throw "后端 jar 不存在: $Jar，请先执行 mvn -DskipTests package 构建" }
         $mysqlUrl = 'jdbc:mysql://localhost:3307/video_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false'
         Start-Svc -Name backend -File $Java -ArgList @('-jar', $Jar) -Port 8081 -Env @{
@@ -214,8 +288,8 @@ try {
             LLM_API_KEY    = $EnvLLMKey
             LLM_MODEL      = $EnvLLMModel
         }
-        if (-not (Wait-Http 'http://localhost:8081/health' 120 'backend')) {
-            Write-Host "后端启动失败，请查看 $Logs\backend.err.log" -ForegroundColor Red
+        if (-not (Wait-ServiceHttp 'http://localhost:8081/health' 120 'backend' 'backend')) {
+            Write-Host "后端启动失败；上方已输出 $Logs\backend.log 和 backend.err.log 的末尾内容" -ForegroundColor Red
             throw 'backend failed to start'
         }
     } else { Write-Host "[backend] 已在 8081 运行，跳过" -ForegroundColor Yellow }

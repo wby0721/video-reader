@@ -14,6 +14,7 @@ import com.videoagent.repository.AnalysisFeedbackRepository;
 import com.videoagent.repository.FailedAnalysisTaskRepository;
 import com.videoagent.repository.MediaFileRepository;
 import com.videoagent.service.StageEventPublisher;
+import com.videoagent.service.retrieval.RetrievalIndexService;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,13 +68,15 @@ public class MediaService {
     private final AnalysisFeedbackRepository feedbackRepository;
     private final FailedAnalysisTaskRepository failedTaskRepository;
     private final StageEventPublisher events;
+    private final RetrievalIndexService retrievalIndexService;
 
     public MediaService(S3Client s3Client, AppProperties properties,
                         RedissonClient redisson, MediaFileRepository mediaFileRepository,
                         AgentCheckpointRepository agentCheckpointRepository,
-                        AnalysisFeedbackRepository feedbackRepository,
-                        FailedAnalysisTaskRepository failedTaskRepository,
-                        StageEventPublisher events) {
+                         AnalysisFeedbackRepository feedbackRepository,
+                         FailedAnalysisTaskRepository failedTaskRepository,
+                         StageEventPublisher events,
+                         RetrievalIndexService retrievalIndexService) {
         this.s3Client = s3Client;
         this.properties = properties;
         this.redisson = redisson;
@@ -82,6 +85,7 @@ public class MediaService {
         this.feedbackRepository = feedbackRepository;
         this.failedTaskRepository = failedTaskRepository;
         this.events = events;
+        this.retrievalIndexService = retrievalIndexService;
     }
 
     private String bucket() {
@@ -261,6 +265,9 @@ public class MediaService {
     public void delete(Long userId, Long mediaId) {
         MediaFile media = mediaFileRepository.findByIdAndUserId(mediaId, userId)
                 .orElseThrow(() -> new BusinessException(404, "媒体不存在"));
+        boolean lastContentReference = media.getContentHash() != null
+                && mediaFileRepository.countByUserIdAndContentHashAndIdNot(
+                        userId, media.getContentHash(), mediaId) == 0;
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket()).key(media.getFilePath()).build());
         } catch (Exception e) {
@@ -277,6 +284,10 @@ public class MediaService {
         redisson.getMap("analysis:last-goal").remove(mediaId);
         // SSE：清理最新阶段并完成订阅
         events.remove(mediaId);
+        retrievalIndexService.invalidate(mediaId);
+        if (lastContentReference) {
+            retrievalIndexService.deleteContentIndex(userId, media.getContentHash());
+        }
         log.info("媒体已删除 mediaId={} userId={}", mediaId, userId);
     }
 

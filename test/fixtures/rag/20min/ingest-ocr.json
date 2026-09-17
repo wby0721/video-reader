@@ -1,0 +1,1018 @@
+[
+  {
+    "timestampMs": 7000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/7000.jpg"
+  },
+  {
+    "timestampMs": 15000,
+    "texts": [
+      "Redis 缓存设计：性能不是唯一目标"
+    ],
+    "frameRef": "frames/900020/15000.jpg"
+  },
+  {
+    "timestampMs": 18000,
+    "texts": [
+      "课程讲义 01",
+      "大家好，这节课用二十分钟梳理 Redis 缓存设计。我们先区分数据库和缓存：数据库负",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/18000.jpg"
+  },
+  {
+    "timestampMs": 31000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/31000.jpg"
+  },
+  {
+    "timestampMs": 44000,
+    "texts": [
+      "章节进度 1/20",
+      "Video Reader Training 2026",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/44000.jpg"
+  },
+  {
+    "timestampMs": 53000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/53000.jpg"
+  },
+  {
+    "timestampMs": 67000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/67000.jpg"
+  },
+  {
+    "timestampMs": 78000,
+    "texts": [
+      "课程讲义 02",
+      "第一个概念是键值模型。Redis 的字符串并不只表示普通文本，也可以保存整数、序列化",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/78000.jpg"
+  },
+  {
+    "timestampMs": 91000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/91000.jpg"
+  },
+  {
+    "timestampMs": 95000,
+    "texts": [
+      "Key 命名示例 user:profile:{id}"
+    ],
+    "frameRef": "frames/900020/95000.jpg"
+  },
+  {
+    "timestampMs": 104000,
+    "texts": [
+      "章节进度 2/20",
+      "Video Reader Training 2026",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/104000.jpg"
+  },
+  {
+    "timestampMs": 113000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/113000.jpg"
+  },
+  {
+    "timestampMs": 127000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/127000.jpg"
+  },
+  {
+    "timestampMs": 138000,
+    "texts": [
+      "课程讲义 03",
+      "除了字符串，哈希适合保存字段较多而且经常局部更新的对象，列表适合按顺序处理消息，集合",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/138000.jpg"
+  },
+  {
+    "timestampMs": 151000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/151000.jpg"
+  },
+  {
+    "timestampMs": 164000,
+    "texts": [
+      "章节进度 3/20",
+      "Video Reader Training 2026",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/164000.jpg"
+  },
+  {
+    "timestampMs": 165000,
+    "texts": [
+      "String Hash List Set ZSet"
+    ],
+    "frameRef": "frames/900020/165000.jpg"
+  },
+  {
+    "timestampMs": 173000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/173000.jpg"
+  },
+  {
+    "timestampMs": 187000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/187000.jpg"
+  },
+  {
+    "timestampMs": 198000,
+    "texts": [
+      "课程讲义 04",
+      "接下来讨论缓存命中率。命中率等于从缓存直接得到结果的请求数除以总读取请求数，它能反映",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/198000.jpg"
+  },
+  {
+    "timestampMs": 211000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/211000.jpg"
+  },
+  {
+    "timestampMs": 224000,
+    "texts": [
+      "章节进度 4/20",
+      "Video Reader Training 2026",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/224000.jpg"
+  },
+  {
+    "timestampMs": 233000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/233000.jpg"
+  },
+  {
+    "timestampMs": 247000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/247000.jpg"
+  },
+  {
+    "timestampMs": 258000,
+    "texts": [
+      "课程讲义 05",
+      "缓存穿透指查询一个数据库里本来就不存在的对象，请求每次都绕过缓存落到数据库。常见处理",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/258000.jpg"
+  },
+  {
+    "timestampMs": 265000,
+    "texts": [
+      "缓存穿透：空值缓存 + Bloom Filter"
+    ],
+    "frameRef": "frames/900020/265000.jpg"
+  },
+  {
+    "timestampMs": 271000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/271000.jpg"
+  },
+  {
+    "timestampMs": 284000,
+    "texts": [
+      "章节进度 5/20",
+      "Video Reader Training 2026",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/284000.jpg"
+  },
+  {
+    "timestampMs": 293000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/293000.jpg"
+  },
+  {
+    "timestampMs": 307000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/307000.jpg"
+  },
+  {
+    "timestampMs": 318000,
+    "texts": [
+      "课程讲义 06",
+      "缓存击穿通常发生在某一个极热门键刚好过期的瞬间，大量请求同时访问数据库并尝试重建缓存",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/318000.jpg"
+  },
+  {
+    "timestampMs": 331000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/331000.jpg"
+  },
+  {
+    "timestampMs": 335000,
+    "texts": [
+      "缓存击穿：Single Flight"
+    ],
+    "frameRef": "frames/900020/335000.jpg"
+  },
+  {
+    "timestampMs": 344000,
+    "texts": [
+      "章节进度 6/20",
+      "Video Reader Training 2026",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/344000.jpg"
+  },
+  {
+    "timestampMs": 353000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/353000.jpg"
+  },
+  {
+    "timestampMs": 367000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/367000.jpg"
+  },
+  {
+    "timestampMs": 378000,
+    "texts": [
+      "课程讲义 07",
+      "缓存雪崩和击穿不同，它表示大量键在相近时间同时失效，或者缓存服务整体不可用，结果是数",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/378000.jpg"
+  },
+  {
+    "timestampMs": 391000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/391000.jpg"
+  },
+  {
+    "timestampMs": 395000,
+    "texts": [
+      "缓存雪崩：TTL Jitter + 限流 + 降级"
+    ],
+    "frameRef": "frames/900020/395000.jpg"
+  },
+  {
+    "timestampMs": 404000,
+    "texts": [
+      "章节进度 7/20",
+      "Video Reader Training 2026",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/404000.jpg"
+  },
+  {
+    "timestampMs": 413000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/413000.jpg"
+  },
+  {
+    "timestampMs": 427000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/427000.jpg"
+  },
+  {
+    "timestampMs": 438000,
+    "texts": [
+      "课程讲义 08",
+      "现在看过期策略。业务代码写入缓存时应明确 TTL，也就是生存时间。热点数据可以使用较",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/438000.jpg"
+  },
+  {
+    "timestampMs": 451000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/451000.jpg"
+  },
+  {
+    "timestampMs": 455000,
+    "texts": [
+      "TTL = Base TTL + Random Jitter"
+    ],
+    "frameRef": "frames/900020/455000.jpg"
+  },
+  {
+    "timestampMs": 464000,
+    "texts": [
+      "章节进度 8/20",
+      "Video Reader Training 2026",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/464000.jpg"
+  },
+  {
+    "timestampMs": 473000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/473000.jpg"
+  },
+  {
+    "timestampMs": 487000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/487000.jpg"
+  },
+  {
+    "timestampMs": 498000,
+    "texts": [
+      "课程讲义 09",
+      "当内存达到上限时，Redis 会根据配置执行淘汰策略。LRU 倾向移除最近较少使用的",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/498000.jpg"
+  },
+  {
+    "timestampMs": 511000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/511000.jpg"
+  },
+  {
+    "timestampMs": 524000,
+    "texts": [
+      "章节进度 9/20",
+      "Video Reader Training 2026",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/524000.jpg"
+  },
+  {
+    "timestampMs": 533000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/533000.jpg"
+  },
+  {
+    "timestampMs": 547000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/547000.jpg"
+  },
+  {
+    "timestampMs": 558000,
+    "texts": [
+      "课程讲义 10",
+      "下面进入缓存一致性。最常见的旁路缓存做法是读取时先查缓存，未命中再查数据库并写回；更",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/558000.jpg"
+  },
+  {
+    "timestampMs": 571000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/571000.jpg"
+  },
+  {
+    "timestampMs": 575000,
+    "texts": [
+      "更新顺序：Database Update → Cache Delete"
+    ],
+    "frameRef": "frames/900020/575000.jpg"
+  },
+  {
+    "timestampMs": 584000,
+    "texts": [
+      "章节进度 10/20",
+      "Video Reader Training 2026",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/584000.jpg"
+  },
+  {
+    "timestampMs": 593000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/593000.jpg"
+  },
+  {
+    "timestampMs": 607000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/607000.jpg"
+  },
+  {
+    "timestampMs": 618000,
+    "texts": [
+      "课程讲义 11",
+      "先更新数据库再删除缓存仍然存在一个很窄的并发窗口：某个读请求读到旧数据库值后暂停，更",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/618000.jpg"
+  },
+  {
+    "timestampMs": 631000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/631000.jpg"
+  },
+  {
+    "timestampMs": 635000,
+    "texts": [
+      "一致性窗口与版本校验"
+    ],
+    "frameRef": "frames/900020/635000.jpg"
+  },
+  {
+    "timestampMs": 644000,
+    "texts": [
+      "章节进度 11/20",
+      "Video Reader Training 2026",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/644000.jpg"
+  },
+  {
+    "timestampMs": 653000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/653000.jpg"
+  },
+  {
+    "timestampMs": 667000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/667000.jpg"
+  },
+  {
+    "timestampMs": 678000,
+    "texts": [
+      "课程讲义 12",
+      "如果业务要求更强的一致性，可以在缓存值中附带数据版本，并在写回时拒绝较老版本；也可以",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/678000.jpg"
+  },
+  {
+    "timestampMs": 691000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/691000.jpg"
+  },
+  {
+    "timestampMs": 704000,
+    "texts": [
+      "章节进度 12/20",
+      "Video Reader Training 2026",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/704000.jpg"
+  },
+  {
+    "timestampMs": 713000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/713000.jpg"
+  },
+  {
+    "timestampMs": 727000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/727000.jpg"
+  },
+  {
+    "timestampMs": 738000,
+    "texts": [
+      "课程讲义 13",
+      "热点键会让单个分片、单个网络连接甚至单个 CPU 核心成为瓶颈。发现热点要结合每秒请",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/738000.jpg"
+  },
+  {
+    "timestampMs": 745000,
+    "texts": [
+      "热点键 / 大键治理"
+    ],
+    "frameRef": "frames/900020/745000.jpg"
+  },
+  {
+    "timestampMs": 751000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/751000.jpg"
+  },
+  {
+    "timestampMs": 764000,
+    "texts": [
+      "章节进度 13/20",
+      "Video Reader Training 2026",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/764000.jpg"
+  },
+  {
+    "timestampMs": 773000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/773000.jpg"
+  },
+  {
+    "timestampMs": 787000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/787000.jpg"
+  },
+  {
+    "timestampMs": 798000,
+    "texts": [
+      "课程讲义 14",
+      "大键是另一个常见问题。一个包含几十万成员的集合可能导致删除、迁移和序列化操作长时间占",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/798000.jpg"
+  },
+  {
+    "timestampMs": 811000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/811000.jpg"
+  },
+  {
+    "timestampMs": 824000,
+    "texts": [
+      "章节进度 14/20",
+      "Video Reader Training 2026",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/824000.jpg"
+  },
+  {
+    "timestampMs": 833000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/833000.jpg"
+  },
+  {
+    "timestampMs": 847000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/847000.jpg"
+  },
+  {
+    "timestampMs": 858000,
+    "texts": [
+      "课程讲义 15",
+      "持久化方面，RDB 是某个时间点的数据快照，文件紧凑、恢复较快，但故障时可能丢失最近",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/858000.jpg"
+  },
+  {
+    "timestampMs": 865000,
+    "texts": [
+      "RDB Snapshot vs AOF Log"
+    ],
+    "frameRef": "frames/900020/865000.jpg"
+  },
+  {
+    "timestampMs": 871000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/871000.jpg"
+  },
+  {
+    "timestampMs": 884000,
+    "texts": [
+      "章节进度 15/20",
+      "Video Reader Training 2026",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/884000.jpg"
+  },
+  {
+    "timestampMs": 893000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/893000.jpg"
+  },
+  {
+    "timestampMs": 907000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/907000.jpg"
+  },
+  {
+    "timestampMs": 918000,
+    "texts": [
+      "课程讲义 16",
+      "主从复制和哨兵用于提高可用性。主节点故障后，哨兵可以协助选择从节点并完成故障转移。应",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/918000.jpg"
+  },
+  {
+    "timestampMs": 931000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/931000.jpg"
+  },
+  {
+    "timestampMs": 944000,
+    "texts": [
+      "章节进度 16/20",
+      "Video Reader Training 2026",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/944000.jpg"
+  },
+  {
+    "timestampMs": 953000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/953000.jpg"
+  },
+  {
+    "timestampMs": 967000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/967000.jpg"
+  },
+  {
+    "timestampMs": 978000,
+    "texts": [
+      "课程讲义 17",
+      "集群模式把键空间划分到多个哈希槽中，不同主节点负责不同槽。包含多个键的操作如果跨槽会",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/978000.jpg"
+  },
+  {
+    "timestampMs": 985000,
+    "texts": [
+      "Redis Cluster：16384 Hash Slots"
+    ],
+    "frameRef": "frames/900020/985000.jpg"
+  },
+  {
+    "timestampMs": 991000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/991000.jpg"
+  },
+  {
+    "timestampMs": 1004000,
+    "texts": [
+      "章节进度 17/20",
+      "Video Reader Training 2026",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/1004000.jpg"
+  },
+  {
+    "timestampMs": 1013000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900020/1013000.jpg"
+  },
+  {
+    "timestampMs": 1027000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900020/1027000.jpg"
+  },
+  {
+    "timestampMs": 1038000,
+    "texts": [
+      "课程讲义 18",
+      "监控至少包含请求量、命中率、内存、淘汰数、过期数、连接数、网络带宽、复制延迟和慢查询",
+      "缓存课件 · INTERNAL"
+    ],
+    "frameRef": "frames/900020/1038000.jpg"
+  },
+  {
+    "timestampMs": 1051000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900020/1051000.jpg"
+  },
+  {
+    "timestampMs": 1064000,
+    "texts": [
+      "章节进度 18/20",
+      "Video Reader Training 2026",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/1064000.jpg"
+  },
+  {
+    "timestampMs": 1073000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900020/1073000.jpg"
+  },
+  {
+    "timestampMs": 1085000,
+    "texts": [
+      "指标：Hit Rate / Evictions / P99"
+    ],
+    "frameRef": "frames/900020/1085000.jpg"
+  },
+  {
+    "timestampMs": 1087000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900020/1087000.jpg"
+  },
+  {
+    "timestampMs": 1098000,
+    "texts": [
+      "课程讲义 19",
+      "做容量估算时，先统计热点对象数量和平均序列化大小，再乘以副本、内存碎片和增长余量。压",
+      "旁白字幕可能有错字"
+    ],
+    "frameRef": "frames/900020/1098000.jpg"
+  },
+  {
+    "timestampMs": 1111000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900020/1111000.jpg"
+  },
+  {
+    "timestampMs": 1124000,
+    "texts": [
+      "章节进度 19/20",
+      "Video Reader Training 2026",
+      "Redls 演示环境"
+    ],
+    "frameRef": "frames/900020/1124000.jpg"
+  },
+  {
+    "timestampMs": 1133000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900020/1133000.jpg"
+  },
+  {
+    "timestampMs": 1147000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900020/1147000.jpg"
+  },
+  {
+    "timestampMs": 1158000,
+    "texts": [
+      "课程讲义 20",
+      "最后总结：缓存设计先确定数据真源和一致性要求，再选择数据结构、TTL、淘汰策略与更新",
+      "请以数据真源为准"
+    ],
+    "frameRef": "frames/900020/1158000.jpg"
+  },
+  {
+    "timestampMs": 1165000,
+    "texts": [
+      "CACHE-SHIELD-X7"
+    ],
+    "frameRef": "frames/900020/1165000.jpg"
+  },
+  {
+    "timestampMs": 1171000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900020/1171000.jpg"
+  },
+  {
+    "timestampMs": 1184000,
+    "texts": [
+      "章节进度 20/20",
+      "Video Reader Training 2026",
+      "自动识别：踢踢艾勒"
+    ],
+    "frameRef": "frames/900020/1184000.jpg"
+  },
+  {
+    "timestampMs": 1193000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900020/1193000.jpg"
+  }
+]

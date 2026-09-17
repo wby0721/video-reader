@@ -18,6 +18,8 @@ const sending = ref(false);
 const video = ref(null);
 const statusText = ref('');
 const showDelete = ref(false);
+const chatAction = ref(''); // clear | undo
+const chatMutating = ref(false);
 
 // 阶段 → 中文提示（进度条 / 状态横幅共用）
 const STAGE_LABEL = {
@@ -44,11 +46,57 @@ async function load() {
   try { context.value = await api.get(`/analysis/context?mediaId=${mediaId}`); } catch {}
   // 恢复持久化的追问历史
   try {
-    const history = await api.chatHistory(mediaId);
+    const history = await api.visibleChatHistory(mediaId);
     if (Array.isArray(history) && history.length) {
-      chat.value = history.map(h => ({ role: h.role, text: h.content }));
+      chat.value = history.map(h => ({
+        role: h.role,
+        text: h.content,
+        evidence: h.evidencePack?.length ? h.evidencePack : (h.evidence || []),
+        retrieval: h.retrieval
+      }));
     }
   } catch {}
+}
+
+function mapVisibleChat(history) {
+  return (Array.isArray(history) ? history : []).map(h => ({
+    role: h.role,
+    text: h.content,
+    evidence: h.evidencePack?.length ? h.evidencePack : (h.evidence || []),
+    retrieval: h.retrieval
+  }));
+}
+
+const chatConfirm = computed(() => chatAction.value === 'clear'
+  ? {
+      title: '清空当前追问框',
+      message: '确定清空当前视频的追问框吗？工作台将不再显示这些记录，后续追问也不会使用它们作为对话历史；后台可信度 Trace 仍会完整保留。',
+      confirmText: '确认清空',
+      danger: true,
+    }
+  : {
+      title: '撤销上一轮追问',
+      message: '确定撤销最近一轮提问及回答吗？工作台和后续连续追问将忽略这一轮，但后台可信度 Trace 仍会完整保留。',
+      confirmText: '确认撤销',
+      danger: false,
+    });
+
+async function applyChatAction() {
+  if (!chatAction.value || chatMutating.value) return;
+  const action = chatAction.value;
+  chatMutating.value = true;
+  try {
+    const history = action === 'clear'
+      ? await api.clearChatHistory(Number(mediaId))
+      : await api.undoChatHistory(Number(mediaId));
+    chat.value = mapVisibleChat(history);
+    if (action === 'clear') question.value = '';
+    chatAction.value = '';
+  } catch (e) {
+    alert('操作失败：' + e.message);
+  } finally {
+    chatMutating.value = false;
+  }
 }
 onMounted(() => { load(); loadVideo(); });
 
@@ -231,9 +279,17 @@ async function ask() {
     const data = await api.chat(Number(mediaId), q, history);
     // 后端已持久化并返回完整历史，直接覆盖本地（保证与服务端一致）
     if (data && Array.isArray(data.history) && data.history.length) {
-      chat.value = data.history.map(h => ({ role: h.role, text: h.content }));
+      chat.value = data.history.map(h => ({
+        role: h.role,
+        text: h.content,
+        evidence: h.evidencePack?.length ? h.evidencePack : (h.evidence || []),
+        retrieval: h.retrieval
+      }));
+      const lastAssistant = [...chat.value].reverse().find(c => c.role === 'assistant');
+      if (lastAssistant && Array.isArray(data.evidence)) lastAssistant.evidence = data.evidence;
+      if (lastAssistant) lastAssistant.retrieval = data.retrieval;
     } else {
-      chat.value.push({ role: 'assistant', text: (data && data.answer) || '抱歉，暂时无法回答。' });
+      chat.value.push({ role: 'assistant', text: (data && data.answer) || '抱歉，暂时无法回答。', evidence: data?.evidence || [], retrieval: data?.retrieval });
     }
   } catch (e) {
     chat.value.push({ role: 'assistant', text: '请求失败：' + e.message });
@@ -307,10 +363,27 @@ async function doDelete() {
             <video ref="video" :src="videoSrc" controls class="player" @loadedmetadata="onLoaded"></video>
           </div>
           <div class="panel chat">
+            <div class="chat-headbar">
+              <span class="plabel">视频追问</span>
+              <div class="chat-actions">
+                <button class="btn ghost compact" :disabled="sending || chatMutating || !chat.length" @click="chatAction = 'undo'">撤销上一轮</button>
+                <button class="btn ghost compact" :disabled="sending || chatMutating || !chat.length" @click="chatAction = 'clear'">清空</button>
+              </div>
+            </div>
             <div class="chat-box">
               <div v-for="(c, i) in chat" :key="i" class="msg" :class="c.role">
                 <b>{{ c.role === 'user' ? '你' : 'Agent' }}</b>
                 <span>{{ c.text }}</span>
+                <small v-if="c.role === 'assistant' && c.retrieval && c.retrieval.status !== 'CANDIDATE_EVIDENCE'" class="muted">{{ c.retrieval.hint }}</small>
+                <div v-if="c.role === 'assistant' && c.evidence?.length" class="chat-evidence">
+                  <button
+                    v-for="(e, j) in c.evidence"
+                    :key="(e.chunkIds || [e.chunkId || j]).join('-')"
+                    class="btn-link"
+                    :title="e.quote || e.summary || '查看证据位置'"
+                    @click="seekTo(e.startMs)"
+                  >[证据{{ j + 1 }}] {{ fmt(e.startMs) }}</button>
+                </div>
               </div>
               <div v-if="!chat.length" class="muted">
                 {{ context ? '对视频内容连续追问，例如「XX 定理的前提是什么？」' : '上下文尚未生成，转写完成后即可追问…' }}
@@ -400,6 +473,15 @@ async function doDelete() {
       @confirm="doDelete"
       @cancel="showDelete = false"
     />
+    <ConfirmDialog
+      :open="!!chatAction"
+      :title="chatConfirm.title"
+      :message="chatConfirm.message"
+      :confirm-text="chatConfirm.confirmText"
+      :danger="chatConfirm.danger"
+      @confirm="applyChatAction"
+      @cancel="chatAction = ''"
+    />
   </div>
 </template>
 
@@ -419,10 +501,14 @@ async function doDelete() {
 .left, .right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .player { width: 100%; max-height: 420px; background: #000; border-radius: 8px; }
 .chat { display: flex; flex-direction: column; height: 340px; }
+.chat-headbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.chat-actions { display: flex; gap: 6px; }
+.compact { padding: 4px 9px; font-size: 12px; }
 .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
 .msg { display: flex; flex-direction: column; gap: 4px; white-space: pre-wrap; }
 .msg b { color: var(--text-2); font-size: 12px; }
 .msg.user b { color: var(--primary); }
+.chat-evidence { display: flex; flex-wrap: wrap; gap: 8px; }
 .chat-input { display: flex; gap: 8px; }
 .chat-input input { flex: 1; }
 h3 { margin: 0 0 12px; }

@@ -18,4 +18,7 @@ public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
      */
     Optional<MediaFile> findFirstByUserIdAndContentHashAndStatusOrderByIdDesc(
             Long userId, String contentHash, String status);
+
+    /** 删除媒体时判断同用户是否仍有相同内容的其他引用。 */
+    long countByUserIdAndContentHashAndIdNot(Long userId, String contentHash, Long id);
 }

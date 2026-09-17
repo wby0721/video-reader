@@ -6,7 +6,8 @@ $py = "E:\agent_projct\.tools\python312\python.exe"
 $jobs = @(
     @{ Name = "embedding"; Port = 8000; File = "E:\agent_projct\video_reader\inference\embedding\app.py" },
     @{ Name = "asr";       Port = 8001; File = "E:\agent_projct\video_reader\inference\asr\app.py" },
-    @{ Name = "ocr";       Port = 8002; File = "E:\agent_projct\video_reader\inference\ocr\app.py" }
+    @{ Name = "ocr";       Port = 8002; File = "E:\agent_projct\video_reader\inference\ocr\app.py" },
+    @{ Name = "reranker";  Port = 8003; File = "E:\agent_projct\video_reader\inference\reranker\app.py" }
 )
 
 foreach ($j in $jobs) {

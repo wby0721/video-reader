@@ -8,9 +8,23 @@ import java.util.List;
 public record EvidenceHit(
         long startMs,
         long endMs,
+        String chunkId,
         String summary,
         List<String> keywords,
         double score,
         List<String> matchedTerms,
-        String source       // QDRANT / LOCAL_COSINE / KEYWORD_ONLY
-) {}
+        String source,      // recall channels; independent of score type
+        ScoreType scoreType
+) {
+    public enum ScoreType { RERANKER_SIGMOID, RRF, UNKNOWN }
+
+    public EvidenceHit {
+        // Old checkpoint records have no scoreType. Never guess from the numeric range.
+        scoreType = scoreType == null ? ScoreType.UNKNOWN : scoreType;
+    }
+
+    public EvidenceHit(long startMs, long endMs, String chunkId, String summary,
+                       List<String> keywords, double score, List<String> matchedTerms, String source) {
+        this(startMs, endMs, chunkId, summary, keywords, score, matchedTerms, source, ScoreType.UNKNOWN);
+    }
+}

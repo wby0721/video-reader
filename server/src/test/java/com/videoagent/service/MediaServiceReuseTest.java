@@ -9,6 +9,7 @@ import com.videoagent.repository.AgentCheckpointRepository;
 import com.videoagent.repository.AnalysisFeedbackRepository;
 import com.videoagent.repository.FailedAnalysisTaskRepository;
 import com.videoagent.repository.MediaFileRepository;
+import com.videoagent.service.retrieval.RetrievalIndexService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.redisson.api.RMap;
@@ -57,9 +58,12 @@ class MediaServiceReuseTest {
     private final RedissonClient redisson = mock(RedissonClient.class);
     private final MediaFileRepository mediaRepo = mock(MediaFileRepository.class);
     private final AgentCheckpointRepository cpRepo = mock(AgentCheckpointRepository.class);
+    private final AnalysisFeedbackRepository feedbackRepo = mock(AnalysisFeedbackRepository.class);
+    private final FailedAnalysisTaskRepository failedTaskRepo = mock(FailedAnalysisTaskRepository.class);
+    private final StageEventPublisher events = mock(StageEventPublisher.class);
+    private final RetrievalIndexService retrievalIndexService = mock(RetrievalIndexService.class);
     private final MediaService service = new MediaService(s3, props, redisson, mediaRepo, cpRepo,
-            mock(AnalysisFeedbackRepository.class), mock(FailedAnalysisTaskRepository.class),
-            mock(StageEventPublisher.class));
+            feedbackRepo, failedTaskRepo, events, retrievalIndexService);
     private final Map<String, Object> pendingBacking = new HashMap<>();
 
     private void mockInfra() {
@@ -168,5 +172,36 @@ class MediaServiceReuseTest {
 
         verify(mediaRepo).findFirstByUserIdAndContentHashAndStatusOrderByIdDesc(
                 eq(USER_A), eq(HASH), eq(MediaFile.STATUS_CONTEXT_READY));
+    }
+
+    @Test
+    void delete_invalidatesRetrievalMemoryCache() {
+        mockInfra();
+        MediaFile media = sourceMedia(USER_A);
+        media.setFilePath("media/7/source.mp4");
+        when(mediaRepo.findByIdAndUserId(SOURCE_ID, USER_A)).thenReturn(Optional.of(media));
+
+        service.delete(USER_A, SOURCE_ID);
+
+        verify(retrievalIndexService).invalidate(SOURCE_ID);
+        verify(retrievalIndexService).deleteContentIndex(USER_A, HASH);
+        verify(cpRepo).deleteByMediaId(SOURCE_ID);
+        verify(feedbackRepo).deleteByMediaId(SOURCE_ID);
+        verify(failedTaskRepo).deleteByMediaId(SOURCE_ID);
+        verify(mediaRepo).delete(media);
+    }
+
+    @Test
+    void delete_keepsSharedContentIndexWhileAnotherMediaReferencesIt() {
+        mockInfra();
+        MediaFile media = sourceMedia(USER_A);
+        media.setFilePath("media/7/source.mp4");
+        when(mediaRepo.findByIdAndUserId(SOURCE_ID, USER_A)).thenReturn(Optional.of(media));
+        when(mediaRepo.countByUserIdAndContentHashAndIdNot(USER_A, HASH, SOURCE_ID)).thenReturn(1L);
+
+        service.delete(USER_A, SOURCE_ID);
+
+        verify(retrievalIndexService).invalidate(SOURCE_ID);
+        verify(retrievalIndexService, never()).deleteContentIndex(anyLong(), anyString());
     }
 }

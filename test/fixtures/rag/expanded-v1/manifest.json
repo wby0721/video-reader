@@ -1,0 +1,566 @@
+{
+  "schemaVersion": 1,
+  "provenance": "synthetic-authored-v1",
+  "videos": [
+    {
+      "id": "video-01",
+      "title": "手冲咖啡的课堂实验",
+      "durationMs": 1200000,
+      "mediaId": 982001,
+      "userId": 982000,
+      "contentHash": "a4df826704e11c9712a5ebc6adf609aa5721de3bb5f5f8c98fd775d687d44d58",
+      "questions": [
+        {
+          "id": "video-01-q1",
+          "turn": 1,
+          "userQuestion": "水流很慢而且喝着发苦，老师是怎样排查的？",
+          "standaloneQuery": "手冲咖啡的课堂实验：水流很慢而且喝着发苦，老师是怎样排查的？"
+        },
+        {
+          "id": "video-01-q2",
+          "turn": 2,
+          "userQuestion": "那倒水的时候为什么不能沿着滤纸边缘冲？",
+          "standaloneQuery": "手冲咖啡的课堂实验：倒水的时候为什么不能沿着滤纸边缘冲？"
+        },
+        {
+          "id": "video-01-q3",
+          "turn": 3,
+          "userQuestion": "这次注水用的壶是哪一款，出厂序列号是多少？",
+          "standaloneQuery": "手冲咖啡的课堂实验：这次注水用的壶是哪一款，出厂序列号是多少？"
+        }
+      ]
+    },
+    {
+      "id": "video-02",
+      "title": "阳台绿植换盆演示",
+      "durationMs": 1200000,
+      "mediaId": 982002,
+      "userId": 982000,
+      "contentHash": "664fed6a14346360ce500bbe1b2d14649a7d64a7d0ff107e5d67cff1becea4b0",
+      "questions": [
+        {
+          "id": "video-02-q1",
+          "turn": 1,
+          "userQuestion": "什么时候该换盆，取出根团时又该注意什么？",
+          "standaloneQuery": "阳台绿植换盆演示：什么时候该换盆，取出根团时又该注意什么？"
+        },
+        {
+          "id": "video-02-q2",
+          "turn": 2,
+          "userQuestion": "换完之后怎么判断要不要浇水？",
+          "standaloneQuery": "阳台绿植换盆演示：换完之后怎么判断要不要浇水？"
+        },
+        {
+          "id": "video-02-q3",
+          "turn": 3,
+          "userQuestion": "刚才新盆的供应商统一社会信用代码是多少？",
+          "standaloneQuery": "阳台绿植换盆演示：刚才新盆的供应商统一社会信用代码是多少？"
+        }
+      ]
+    },
+    {
+      "id": "video-03",
+      "title": "自行车链条清洁记录",
+      "durationMs": 1200000,
+      "mediaId": 982003,
+      "userId": 982000,
+      "contentHash": "c8c5d4fadb79fd7bfedcf4620069cf3593c8814a91d8e252d61176f1ee3522f5",
+      "questions": [
+        {
+          "id": "video-03-q1",
+          "turn": 1,
+          "userQuestion": "清理传动部分有哪些防止夹手的做法？",
+          "standaloneQuery": "自行车链条清洁记录：清理传动部分有哪些防止夹手的做法？"
+        },
+        {
+          "id": "video-03-q2",
+          "turn": 2,
+          "userQuestion": "那上完润滑油之后为什么还要擦一遍？",
+          "standaloneQuery": "自行车链条清洁记录：上完润滑油之后为什么还要擦一遍？"
+        },
+        {
+          "id": "video-03-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，彩虹为什么会出现不同颜色？",
+          "standaloneQuery": "换个话题，彩虹为什么会出现不同颜色？"
+        }
+      ]
+    },
+    {
+      "id": "video-04",
+      "title": "家庭录音降噪练习",
+      "durationMs": 1200000,
+      "mediaId": 982004,
+      "userId": 982000,
+      "contentHash": "04d430452bfcc0d49c495408776c3a0a131fa66743f6f9d0b91587782b9aa25a",
+      "questions": [
+        {
+          "id": "video-04-q1",
+          "turn": 1,
+          "userQuestion": "开始录制之前怎样减少环境噪声？",
+          "standaloneQuery": "家庭录音降噪练习：开始录制之前怎样减少环境噪声？"
+        },
+        {
+          "id": "video-04-q2",
+          "turn": 2,
+          "userQuestion": "那后期降噪开得太大，会有什么听感变化？",
+          "standaloneQuery": "家庭录音降噪练习：后期降噪开得太大，会有什么听感变化？"
+        },
+        {
+          "id": "video-04-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，月球为什么总以同一面朝向地球？",
+          "standaloneQuery": "换个话题，月球为什么总以同一面朝向地球？"
+        }
+      ]
+    },
+    {
+      "id": "video-05",
+      "title": "相机曝光三要素实验",
+      "durationMs": 1200000,
+      "mediaId": 982005,
+      "userId": 982000,
+      "contentHash": "f6acb6dd99ea45803b60bdc534a6b12b53fcf76ee2196c1a136f7f1de66b57d4",
+      "questions": [
+        {
+          "id": "video-05-q1",
+          "turn": 1,
+          "userQuestion": "拍活动的人手部拖影，课堂用什么方法找原因？",
+          "standaloneQuery": "相机曝光三要素实验：拍活动的人手部拖影，课堂用什么方法找原因？"
+        },
+        {
+          "id": "video-05-q2",
+          "turn": 2,
+          "userQuestion": "那想让前后两只杯子都清楚，光圈该怎样比较？",
+          "standaloneQuery": "相机曝光三要素实验：想让前后两只杯子都清楚，光圈该怎样比较？"
+        },
+        {
+          "id": "video-05-q3",
+          "turn": 3,
+          "userQuestion": "刚才那只镜头的光学设计专利号是什么？",
+          "standaloneQuery": "相机曝光三要素实验：刚才那只镜头的光学设计专利号是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-06",
+      "title": "Git分支协作入门",
+      "durationMs": 1200000,
+      "mediaId": 982006,
+      "userId": 982000,
+      "contentHash": "684bf9f60f07e4f1b4cd04211b397d4d5f780d16471b8eb21d2baadaeb287935",
+      "questions": [
+        {
+          "id": "video-06-q1",
+          "turn": 1,
+          "userQuestion": "为什么要开功能分支，提交前检查哪些东西？",
+          "standaloneQuery": "Git分支协作入门：为什么要开功能分支，提交前检查哪些东西？"
+        },
+        {
+          "id": "video-06-q2",
+          "turn": 2,
+          "userQuestion": "那合并时同一个地方冲突了，该怎么处理？",
+          "standaloneQuery": "Git分支协作入门：合并时同一个地方冲突了，该怎么处理？"
+        },
+        {
+          "id": "video-06-q3",
+          "turn": 3,
+          "userQuestion": "刚才冲突对应的那次提交完整哈希是多少？",
+          "standaloneQuery": "Git分支协作入门：刚才冲突对应的那次提交完整哈希是多少？"
+        }
+      ]
+    },
+    {
+      "id": "video-07",
+      "title": "SQL索引课堂推演",
+      "durationMs": 1200000,
+      "mediaId": 982007,
+      "userId": 982000,
+      "contentHash": "aa216c2d208d4064d45a3c5a4cc2984ca22747e4e53471f2315491a9b05cbff3",
+      "questions": [
+        {
+          "id": "video-07-q1",
+          "turn": 1,
+          "userQuestion": "索引为什么不是越多越好？",
+          "standaloneQuery": "SQL索引课堂推演：索引为什么不是越多越好？"
+        },
+        {
+          "id": "video-07-q2",
+          "turn": 2,
+          "userQuestion": "那多个字段放在一个索引里，顺序应该如何判断？",
+          "standaloneQuery": "SQL索引课堂推演：多个字段放在一个索引里，顺序应该如何判断？"
+        },
+        {
+          "id": "video-07-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，企鹅怎样在海里捕食？",
+          "standaloneQuery": "换个话题，企鹅怎样在海里捕食？"
+        }
+      ]
+    },
+    {
+      "id": "video-08",
+      "title": "Docker容器日志排查",
+      "durationMs": 1200000,
+      "mediaId": 982008,
+      "userId": 982000,
+      "contentHash": "d1dcbd03e2d45a022eb5c59ff0bd8409ebef7b074d8b123057ba54d753bd4203",
+      "questions": [
+        {
+          "id": "video-08-q1",
+          "turn": 1,
+          "userQuestion": "容器一起来就退出，应该先查什么？",
+          "standaloneQuery": "Docker容器日志排查：容器一起来就退出，应该先查什么？"
+        },
+        {
+          "id": "video-08-q2",
+          "turn": 2,
+          "userQuestion": "那容器没退出但网页连不上，端口这块怎么查？",
+          "standaloneQuery": "Docker容器日志排查：容器没退出但网页连不上，端口这块怎么查？"
+        },
+        {
+          "id": "video-08-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，古代活字印刷的流程是什么？",
+          "standaloneQuery": "换个话题，古代活字印刷的流程是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-09",
+      "title": "HTTP缓存演示",
+      "durationMs": 1200000,
+      "mediaId": 982009,
+      "userId": 982000,
+      "contentHash": "82b62e70e4e09f39be87db8fc853c9f5f9bf695242badf373266a2cc2fe652d8",
+      "questions": [
+        {
+          "id": "video-09-q1",
+          "turn": 1,
+          "userQuestion": "页面加载快时，怎么分清是本地缓存还是服务端真的快？",
+          "standaloneQuery": "HTTP缓存演示：页面加载快时，怎么分清是本地缓存还是服务端真的快？"
+        },
+        {
+          "id": "video-09-q2",
+          "turn": 2,
+          "userQuestion": "那协商缓存已经发了请求，为什么还可能节省传输？",
+          "standaloneQuery": "HTTP缓存演示：协商缓存已经发了请求，为什么还可能节省传输？"
+        },
+        {
+          "id": "video-09-q3",
+          "turn": 3,
+          "userQuestion": "刚才协商缓存响应的ETag完整原始值是什么？",
+          "standaloneQuery": "HTTP缓存演示：刚才协商缓存响应的ETag完整原始值是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-10",
+      "title": "消息队列重复消费实验",
+      "durationMs": 1200000,
+      "mediaId": 982010,
+      "userId": 982000,
+      "contentHash": "19df4c61488e11235fec6a36ab61d3d3d02c823ca8f276bf88c9561620c51df0",
+      "questions": [
+        {
+          "id": "video-10-q1",
+          "turn": 1,
+          "userQuestion": "为什么处理过的消息还可能再次收到？",
+          "standaloneQuery": "消息队列重复消费实验：为什么处理过的消息还可能再次收到？"
+        },
+        {
+          "id": "video-10-q2",
+          "turn": 2,
+          "userQuestion": "那怎样避免它重复造成业务副作用？",
+          "standaloneQuery": "消息队列重复消费实验：怎样避免它重复造成业务副作用？"
+        },
+        {
+          "id": "video-10-q3",
+          "turn": 3,
+          "userQuestion": "演示订单的支付流水完整编号是什么？",
+          "standaloneQuery": "消息队列重复消费实验：演示订单的支付流水完整编号是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-11",
+      "title": "面包揉面观察课",
+      "durationMs": 1200000,
+      "mediaId": 982011,
+      "userId": 982000,
+      "contentHash": "a3d6a72a0c25705f72e78893c42625c591eac4ce742d155babdc970e4bbe2a84",
+      "questions": [
+        {
+          "id": "video-11-q1",
+          "turn": 1,
+          "userQuestion": "面团粘手时，为什么不该一直加干粉？",
+          "standaloneQuery": "面包揉面观察课：面团粘手时，为什么不该一直加干粉？"
+        },
+        {
+          "id": "video-11-q2",
+          "turn": 2,
+          "userQuestion": "那后面的发酵应该看时间还是看什么状态？",
+          "standaloneQuery": "面包揉面观察课：后面的发酵应该看时间还是看什么状态？"
+        },
+        {
+          "id": "video-11-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，火山喷发是怎样形成的？",
+          "standaloneQuery": "换个话题，火山喷发是怎样形成的？"
+        }
+      ]
+    },
+    {
+      "id": "video-12",
+      "title": "陶艺拉坯入门",
+      "durationMs": 1200000,
+      "mediaId": 982012,
+      "userId": 982000,
+      "contentHash": "490daa896313e6fe46bbbd452e7e31b1d0c1ef3b1eaf102bef2e0c4daef3bbba",
+      "questions": [
+        {
+          "id": "video-12-q1",
+          "turn": 1,
+          "userQuestion": "泥团转起来一直晃，应该从哪一步解决？",
+          "standaloneQuery": "陶艺拉坯入门：泥团转起来一直晃，应该从哪一步解决？"
+        },
+        {
+          "id": "video-12-q2",
+          "turn": 2,
+          "userQuestion": "那往上提杯壁时怎样避免局部太薄？",
+          "standaloneQuery": "陶艺拉坯入门：往上提杯壁时怎样避免局部太薄？"
+        },
+        {
+          "id": "video-12-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，交响乐里指挥的手势有什么作用？",
+          "standaloneQuery": "换个话题，交响乐里指挥的手势有什么作用？"
+        }
+      ]
+    },
+    {
+      "id": "video-13",
+      "title": "水彩湿画法练习",
+      "durationMs": 1200000,
+      "mediaId": 982013,
+      "userId": 982000,
+      "contentHash": "11b4af6cf58ee94aeceb563b154cd313feb837e083a1bf868ec69aabd895425e",
+      "questions": [
+        {
+          "id": "video-13-q1",
+          "turn": 1,
+          "userQuestion": "怎样判断纸上水量会让颜色形成什么边缘？",
+          "standaloneQuery": "水彩湿画法练习：怎样判断纸上水量会让颜色形成什么边缘？"
+        },
+        {
+          "id": "video-13-q2",
+          "turn": 2,
+          "userQuestion": "那混两种颜色为什么会变得灰脏？",
+          "standaloneQuery": "水彩湿画法练习：混两种颜色为什么会变得灰脏？"
+        },
+        {
+          "id": "video-13-q3",
+          "turn": 3,
+          "userQuestion": "这套颜料每个色号的重金属检测数值是多少？",
+          "standaloneQuery": "水彩湿画法练习：这套颜料每个色号的重金属检测数值是多少？"
+        }
+      ]
+    },
+    {
+      "id": "video-14",
+      "title": "木工手工打磨体验",
+      "durationMs": 1200000,
+      "mediaId": 982014,
+      "userId": 982000,
+      "contentHash": "8eb763bb519954870be24cf9463fd1f06502a8db2f085127fd64e23a4ce40625",
+      "questions": [
+        {
+          "id": "video-14-q1",
+          "turn": 1,
+          "userQuestion": "开始磨木块之前需要做哪些准备？",
+          "standaloneQuery": "木工手工打磨体验：开始磨木块之前需要做哪些准备？"
+        },
+        {
+          "id": "video-14-q2",
+          "turn": 2,
+          "userQuestion": "那为什么砂纸要逐步换细，不能一下跳过去？",
+          "standaloneQuery": "木工手工打磨体验：为什么砂纸要逐步换细，不能一下跳过去？"
+        },
+        {
+          "id": "video-14-q3",
+          "turn": 3,
+          "userQuestion": "刚才细砂纸的采购合同编号是什么？",
+          "standaloneQuery": "木工手工打磨体验：刚才细砂纸的采购合同编号是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-15",
+      "title": "旅行行李整理演示",
+      "durationMs": 1200000,
+      "mediaId": 982015,
+      "userId": 982000,
+      "contentHash": "723d0f3f03631121b114f9b737b4d6a4983f433b06b362a0e8e327e464cf9e4a",
+      "questions": [
+        {
+          "id": "video-15-q1",
+          "turn": 1,
+          "userQuestion": "装行李之前怎样分类，常用东西该放哪？",
+          "standaloneQuery": "旅行行李整理演示：装行李之前怎样分类，常用东西该放哪？"
+        },
+        {
+          "id": "video-15-q2",
+          "turn": 2,
+          "userQuestion": "那衣服怎么选才能减少重复又能搭配？",
+          "standaloneQuery": "旅行行李整理演示：衣服怎么选才能减少重复又能搭配？"
+        },
+        {
+          "id": "video-15-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，候鸟怎样辨别迁徙方向？",
+          "standaloneQuery": "换个话题，候鸟怎样辨别迁徙方向？"
+        }
+      ]
+    },
+    {
+      "id": "video-16",
+      "title": "图书馆资料检索练习",
+      "durationMs": 1200000,
+      "mediaId": 982016,
+      "userId": 982000,
+      "contentHash": "93e4a4f98f5fe92fb6a8cc9f20593d0d3cf96a5d7649fc1d131d735a0d6ab7a2",
+      "questions": [
+        {
+          "id": "video-16-q1",
+          "turn": 1,
+          "userQuestion": "口语问题怎样改成更容易找到资料的检索词？",
+          "standaloneQuery": "图书馆资料检索练习：口语问题怎样改成更容易找到资料的检索词？"
+        },
+        {
+          "id": "video-16-q2",
+          "turn": 2,
+          "userQuestion": "那找到以后怎么分辨相关的资料是否可靠？",
+          "standaloneQuery": "图书馆资料检索练习：找到以后怎么分辨相关的资料是否可靠？"
+        },
+        {
+          "id": "video-16-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，海水为什么会有潮汐？",
+          "standaloneQuery": "换个话题，海水为什么会有潮汐？"
+        }
+      ]
+    },
+    {
+      "id": "video-17",
+      "title": "会议纪要整理方法",
+      "durationMs": 1200000,
+      "mediaId": 982017,
+      "userId": 982000,
+      "contentHash": "5eae7f67c0f9b15993f31d4cd79d3d6fc16b161722c36c1fdc4a4531d5c727c5",
+      "questions": [
+        {
+          "id": "video-17-q1",
+          "turn": 1,
+          "userQuestion": "怎样避免把会上讨论的想法误记成正式决定？",
+          "standaloneQuery": "会议纪要整理方法：怎样避免把会上讨论的想法误记成正式决定？"
+        },
+        {
+          "id": "video-17-q2",
+          "turn": 2,
+          "userQuestion": "那正式行动项应该包含哪些要素？",
+          "standaloneQuery": "会议纪要整理方法：正式行动项应该包含哪些要素？"
+        },
+        {
+          "id": "video-17-q3",
+          "turn": 3,
+          "userQuestion": "刚才责任人的私人手机号码是多少？",
+          "standaloneQuery": "会议纪要整理方法：刚才责任人的私人手机号码是多少？"
+        }
+      ]
+    },
+    {
+      "id": "video-18",
+      "title": "仓库拣货流程演示",
+      "durationMs": 1200000,
+      "mediaId": 982018,
+      "userId": 982000,
+      "contentHash": "c7ccbb130204655b908835d06a0adf5d9ff2cc050090067f80a909f8d4e5e337",
+      "questions": [
+        {
+          "id": "video-18-q1",
+          "turn": 1,
+          "userQuestion": "两件包装很像的货，怎样防止拿错规格？",
+          "standaloneQuery": "仓库拣货流程演示：两件包装很像的货，怎样防止拿错规格？"
+        },
+        {
+          "id": "video-18-q2",
+          "turn": 2,
+          "userQuestion": "那复核时数量一致是否就说明没问题？",
+          "standaloneQuery": "仓库拣货流程演示：复核时数量一致是否就说明没问题？"
+        },
+        {
+          "id": "video-18-q3",
+          "turn": 3,
+          "userQuestion": "这单收货人的完整家庭地址是什么？",
+          "standaloneQuery": "仓库拣货流程演示：这单收货人的完整家庭地址是什么？"
+        }
+      ]
+    },
+    {
+      "id": "video-19",
+      "title": "播客剪辑节奏练习",
+      "durationMs": 1200000,
+      "mediaId": 982019,
+      "userId": 982000,
+      "contentHash": "9bdd7e9c4f8e63d6abcb7c5fe9174ca13ba58db2050fb3402ea29d4972673132",
+      "questions": [
+        {
+          "id": "video-19-q1",
+          "turn": 1,
+          "userQuestion": "剪节目时为什么不能把所有语气词和停顿删光？",
+          "standaloneQuery": "播客剪辑节奏练习：剪节目时为什么不能把所有语气词和停顿删光？"
+        },
+        {
+          "id": "video-19-q2",
+          "turn": 2,
+          "userQuestion": "那两段接起来为什么会听着突然变了环境？",
+          "standaloneQuery": "播客剪辑节奏练习：两段接起来为什么会听着突然变了环境？"
+        },
+        {
+          "id": "video-19-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，围棋里什么叫做打劫？",
+          "standaloneQuery": "换个话题，围棋里什么叫做打劫？"
+        }
+      ]
+    },
+    {
+      "id": "video-20",
+      "title": "地图等高线读图练习",
+      "durationMs": 1200000,
+      "mediaId": 982020,
+      "userId": 982000,
+      "contentHash": "8743f91e541809e3aa4fe8ad2f633cafc80691d84d293c97c626b0f0905a8133",
+      "questions": [
+        {
+          "id": "video-20-q1",
+          "turn": 1,
+          "userQuestion": "从等高线疏密判断陡缓前，要先核对什么？",
+          "standaloneQuery": "地图等高线读图练习：从等高线疏密判断陡缓前，要先核对什么？"
+        },
+        {
+          "id": "video-20-q2",
+          "turn": 2,
+          "userQuestion": "那挑路线时为什么不能只选图上最短的一条？",
+          "standaloneQuery": "地图等高线读图练习：挑路线时为什么不能只选图上最短的一条？"
+        },
+        {
+          "id": "video-20-q3",
+          "turn": 3,
+          "userQuestion": "换个话题，银河系大致是什么形状？",
+          "standaloneQuery": "换个话题，银河系大致是什么形状？"
+        }
+      ]
+    }
+  ]
+}

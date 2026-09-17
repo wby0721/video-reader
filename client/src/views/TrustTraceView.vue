@@ -11,6 +11,7 @@ const chat = ref([]);
 const loading = ref(true);
 const error = ref('');
 const tab = ref('process'); // process | chat
+const expandedChatTrace = ref({});
 
 async function load() {
   loading.value = true;
@@ -37,7 +38,19 @@ function fmtTs(ms) {
   return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
 }
 function pct(x) { return x == null ? '—' : (x * 100).toFixed(1) + '%'; }
+function score(x, digits = 6) { return x == null || Number.isNaN(Number(x)) ? '—' : Number(x).toFixed(digits); }
+function rerankerScore(x) { return x == null ? '—' : `${score(x)} (${pct(x)})`; }
+function preview(text, limit = 180) {
+  const value = (text || '').replace(/\s+/g, ' ').trim();
+  return value.length > limit ? value.slice(0, limit) + '…' : (value || '原文证据');
+}
+function toggleChatTrace(index) {
+  expandedChatTrace.value = { ...expandedChatTrace.value, [index]: !expandedChatTrace.value[index] };
+}
+const rankText = (value) => value == null ? '—' : `#${value}`;
+const joinText = (items) => (items || []).join('、') || '—';
 const fmtTime = (ts) => (ts ? new Date(ts).toLocaleTimeString('zh-CN', { hour12: false }) : '');
+const chatEvidence = (entry) => entry.evidencePack?.length ? entry.evidencePack : (entry.evidence || []);
 
 const verdictCls = (s) => (s === 'SUPPORTED' ? 'ok' : s === 'UNSUPPORTED' ? 'bad' : 'warn');
 const verdictLabel = (s) => (s === 'SUPPORTED' ? '有支撑' : s === 'UNSUPPORTED' ? '无支撑' : '不可判定');
@@ -167,19 +180,149 @@ const verdictLabel = (s) => (s === 'SUPPORTED' ? '有支撑' : s === 'UNSUPPORTE
     <!-- ============ 问答 ============ -->
     <div v-else class="panel">
       <h3>连续追问记录（{{ chat.length }} 条）</h3>
-      <p class="muted">每条 assistant 回答下方展示其检索依据的 Top-N 证据片段摘要。</p>
+      <p class="muted">每条 assistant 回答下方展示最终证据；展开后可审计当次真实粗召回、RRF 融合、精排和 EvidencePack。</p>
       <div v-for="(c, i) in chat" :key="i" class="chat-item" :class="c.role">
         <div class="chat-head">
           <b>{{ c.role === 'user' ? '你' : 'Agent' }}</b>
           <span class="muted">{{ fmtTime(c.ts) }}</span>
         </div>
         <p class="chat-text">{{ c.content }}</p>
-        <div v-if="c.role === 'assistant' && (c.evidence || []).length" class="evid">
-          <p class="label">依据证据片段：</p>
-          <div v-for="(e, j) in c.evidence" :key="j" class="evid-item">
+        <div v-if="c.role === 'assistant' && (chatEvidence(c).length || c.retrievalTrace)" class="evid">
+          <div class="evid-head">
+            <p class="label">依据证据片段：</p>
+            <button class="trace-toggle" @click="toggleChatTrace(i)">
+              {{ expandedChatTrace[i] ? '收起' : '展开' }}
+            </button>
+          </div>
+          <div v-for="(e, j) in chatEvidence(c)" :key="(e.chunkIds || [e.chunkId || j]).join('-')" class="evid-item">
+            <span class="badge info">证据{{ j + 1 }}</span>
             <span class="badge info">{{ fmtTs(e.startMs) }}~{{ fmtTs(e.endMs) }}</span>
-            <span class="evid-sum">{{ e.summary }}</span>
-            <span class="muted">支撑 {{ pct(e.score) }}</span>
+            <span class="evid-sum">{{ preview(e.quote || e.summary) }}</span>
+            <span v-if="!e.chunkIds && e.scoreType === 'RERANKER_SIGMOID'" class="muted">精排 {{ pct(e.score) }}</span>
+          </div>
+
+          <div v-if="expandedChatTrace[i]" class="retrieval-trace">
+            <template v-if="c.retrievalTrace">
+              <div class="trace-section">
+                <h4>查询改写</h4>
+                <div class="trace-kv">
+                  <span>原始问题</span><b>{{ c.retrievalTrace.query?.originalQuestion || '—' }}</b>
+                  <span>独立问题</span><b>{{ c.retrievalTrace.query?.standaloneQuestion || '—' }}</b>
+                  <span>语义查询</span><b>{{ c.retrievalTrace.query?.semanticQuery || '—' }}</b>
+                  <span>BM25 查询</span><b>{{ c.retrievalTrace.query?.bm25Query || '—' }}</b>
+                  <span>OCR 查询</span><b>{{ c.retrievalTrace.query?.ocrQuery || '—' }}</b>
+                  <span>关键词</span><b>{{ joinText(c.retrievalTrace.query?.keywords) }}</b>
+                  <span>OCR 关键词</span><b>{{ joinText(c.retrievalTrace.query?.ocrKeywords) }}</b>
+                </div>
+              </div>
+
+              <div class="trace-section">
+                <h4>本次参数与状态</h4>
+                <div class="param-grid">
+                  <span>Dense TopK <b>{{ c.retrievalTrace.parameters?.denseTopK }}</b></span>
+                  <span>BM25 TopK <b>{{ c.retrievalTrace.parameters?.bm25TopK }}</b></span>
+                  <span>OCR TopK <b>{{ c.retrievalTrace.parameters?.ocrTopK }}</b></span>
+                  <span>RRF TopK <b>{{ c.retrievalTrace.parameters?.fusedTopK }}</b></span>
+                  <span>Reranker TopK <b>{{ c.retrievalTrace.parameters?.rerankerTopK }}</b></span>
+                  <span>RRF k <b>{{ c.retrievalTrace.parameters?.rrfK }}</b></span>
+                  <span>Dense 权重 <b>{{ score(c.retrievalTrace.parameters?.rrfWeights?.DENSE, 2) }}</b></span>
+                  <span>BM25 权重 <b>{{ score(c.retrievalTrace.parameters?.rrfWeights?.BM25, 2) }}</b></span>
+                  <span>OCR 权重 <b>{{ score(c.retrievalTrace.parameters?.rrfWeights?.OCR, 2) }}</b></span>
+                  <span>minScore <b>{{ score(c.retrievalTrace.parameters?.minRerankerScore, 2) }}</b></span>
+                  <span>低分硬过滤 <b>{{ c.retrievalTrace.parameters?.rejectLowRelevance ? '开启' : '关闭' }}</b></span>
+                  <span>检索耗时 <b>{{ c.retrievalTrace.durationMs }}ms</b></span>
+                  <span>Dense 来源 <b>{{ c.retrievalTrace.denseSource }}</b></span>
+                  <span>Reranker <b>{{ c.retrievalTrace.rerankerStatus }}</b></span>
+                  <span>最终判定 <b>{{ c.retrievalTrace.assessment?.status || c.retrieval?.status || '—' }}</b></span>
+                </div>
+                <p class="muted trace-hint">{{ c.retrievalTrace.assessment?.hint || c.retrieval?.hint }}</p>
+                <p class="score-note">注意：Dense、BM25/OCR、RRF、Reranker 分数属于不同量纲，只能按各自定义解读。</p>
+              </div>
+
+              <div class="trace-section">
+                <h4>① Dense 粗召回（{{ c.retrievalTrace.denseRecall?.length || 0 }}）</h4>
+                <div class="table-scroll"><table class="trace-table">
+                  <thead><tr><th>排名</th><th>chunkId</th><th>时间</th><th>余弦分数</th><th>摘要 / 关键词</th></tr></thead>
+                  <tbody>
+                    <tr v-for="h in (c.retrievalTrace.denseRecall || [])" :key="h.chunkId">
+                      <td>#{{ h.rank }}</td><td class="chunk-id">{{ h.chunkId }}</td><td>{{ fmtTs(h.startMs) }}~{{ fmtTs(h.endMs) }}</td>
+                      <td>{{ score(h.nativeScore) }}</td><td><div>{{ h.summary || '—' }}</div><small>{{ joinText(h.keywords) }}</small></td>
+                    </tr>
+                    <tr v-if="!c.retrievalTrace.denseRecall?.length"><td colspan="5" class="muted">本通道无候选或不可用</td></tr>
+                  </tbody>
+                </table></div>
+              </div>
+
+              <div class="trace-section">
+                <h4>② BM25 粗召回（{{ c.retrievalTrace.bm25Recall?.length || 0 }}）</h4>
+                <div class="table-scroll"><table class="trace-table">
+                  <thead><tr><th>排名</th><th>chunkId</th><th>时间</th><th>Lucene BM25</th><th>摘要 / 关键词</th></tr></thead>
+                  <tbody>
+                    <tr v-for="h in (c.retrievalTrace.bm25Recall || [])" :key="h.chunkId">
+                      <td>#{{ h.rank }}</td><td class="chunk-id">{{ h.chunkId }}</td><td>{{ fmtTs(h.startMs) }}~{{ fmtTs(h.endMs) }}</td>
+                      <td>{{ score(h.nativeScore) }}</td><td><div>{{ h.summary || '—' }}</div><small>{{ joinText(h.keywords) }}</small></td>
+                    </tr>
+                    <tr v-if="!c.retrievalTrace.bm25Recall?.length"><td colspan="5" class="muted">本通道无候选或不可用</td></tr>
+                  </tbody>
+                </table></div>
+              </div>
+
+              <div class="trace-section">
+                <h4>③ OCR 粗召回（{{ c.retrievalTrace.ocrRecall?.length || 0 }}）</h4>
+                <div class="table-scroll"><table class="trace-table">
+                  <thead><tr><th>排名</th><th>chunkId</th><th>时间</th><th>OCR BM25</th><th>摘要 / 关键词</th></tr></thead>
+                  <tbody>
+                    <tr v-for="h in (c.retrievalTrace.ocrRecall || [])" :key="h.chunkId">
+                      <td>#{{ h.rank }}</td><td class="chunk-id">{{ h.chunkId }}</td><td>{{ fmtTs(h.startMs) }}~{{ fmtTs(h.endMs) }}</td>
+                      <td>{{ score(h.nativeScore) }}</td><td><div>{{ h.summary || '—' }}</div><small>{{ joinText(h.keywords) }}</small></td>
+                    </tr>
+                    <tr v-if="!c.retrievalTrace.ocrRecall?.length"><td colspan="5" class="muted">本通道无候选或不可用</td></tr>
+                  </tbody>
+                </table></div>
+              </div>
+
+              <div class="trace-section">
+                <h4>④ 加权 RRF 融合去重（{{ c.retrievalTrace.fusedCandidates?.length || 0 }}）</h4>
+                <div class="table-scroll"><table class="trace-table wide">
+                  <thead><tr><th>排名</th><th>chunkId</th><th>时间</th><th>通道</th><th>D/B/O 排名</th><th>D/B/O 贡献</th><th>RRF 总分</th><th>摘要</th></tr></thead>
+                  <tbody>
+                    <tr v-for="h in (c.retrievalTrace.fusedCandidates || [])" :key="h.chunkId">
+                      <td>#{{ h.rank }}</td><td class="chunk-id">{{ h.chunkId }}</td><td>{{ fmtTs(h.startMs) }}~{{ fmtTs(h.endMs) }}</td>
+                      <td>{{ joinText(h.sources) }}</td><td>{{ rankText(h.denseRank) }} / {{ rankText(h.bm25Rank) }} / {{ rankText(h.ocrRank) }}</td>
+                      <td>{{ score(h.denseContribution) }} / {{ score(h.bm25Contribution) }} / {{ score(h.ocrContribution) }}</td>
+                      <td>{{ score(h.rrfScore) }}</td><td>{{ h.summary || '—' }}</td>
+                    </tr>
+                    <tr v-if="!c.retrievalTrace.fusedCandidates?.length"><td colspan="8" class="muted">融合后无候选</td></tr>
+                  </tbody>
+                </table></div>
+              </div>
+
+              <div class="trace-section">
+                <h4>⑤ Cross-Encoder 精排（{{ c.retrievalTrace.rerankedCandidates?.length || 0 }}）</h4>
+                <div class="table-scroll"><table class="trace-table">
+                  <thead><tr><th>排名</th><th>chunkId</th><th>时间</th><th>Reranker sigmoid</th><th>RRF 原排名/分数</th><th>摘要</th></tr></thead>
+                  <tbody>
+                    <tr v-for="h in (c.retrievalTrace.rerankedCandidates || [])" :key="h.chunkId">
+                      <td>#{{ h.rank }}</td><td class="chunk-id">{{ h.chunkId }}</td><td>{{ fmtTs(h.startMs) }}~{{ fmtTs(h.endMs) }}</td>
+                      <td>{{ rerankerScore(h.rerankerScore) }}</td><td>{{ rankText((c.retrievalTrace.fusedCandidates || []).findIndex(x => x.chunkId === h.chunkId) + 1) }} / {{ score(h.rrfScore) }}</td>
+                      <td>{{ h.summary || '—' }}</td>
+                    </tr>
+                    <tr v-if="!c.retrievalTrace.rerankedCandidates?.length"><td colspan="6" class="muted">精排后无候选</td></tr>
+                  </tbody>
+                </table></div>
+              </div>
+
+              <div class="trace-section">
+                <h4>⑥ 最终 EvidencePack（{{ chatEvidence(c).length }} 个合并区间）</h4>
+                <div v-for="(e, j) in chatEvidence(c)" :key="`pack-${j}`" class="pack-item">
+                  <div><b>证据{{ j + 1 }}</b> · {{ fmtTs(e.startMs) }}~{{ fmtTs(e.endMs) }} · chunkIds: {{ (e.chunkIds || [e.chunkId]).join(', ') }}</div>
+                  <p class="pack-label">ASR 原文</p><pre>{{ e.quote || e.summary || '—' }}</pre>
+                  <template v-if="e.ocrTexts?.length"><p class="pack-label">OCR 原文</p><pre>{{ e.ocrTexts.join('\n') }}</pre></template>
+                </div>
+                <p v-if="!chatEvidence(c).length" class="muted">本轮没有形成可用 EvidencePack。</p>
+              </div>
+            </template>
+            <p v-else class="muted legacy-note">这条记录生成于完整检索 Trace 上线前，只保留了最终证据，无法真实还原粗召回与精排过程。</p>
           </div>
         </div>
       </div>
@@ -218,6 +361,29 @@ h4 { margin: 12px 0 6px; color: var(--text-2); }
 .chat-head b.user { color: var(--primary); }
 .chat-text { margin: 6px 0; white-space: pre-wrap; }
 .evid { background: var(--hover); border-radius: 8px; padding: 8px 12px; margin-top: 6px; }
+.evid-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.evid-head .label { margin-top: 4px; }
+.trace-toggle { border: 1px solid var(--border); background: var(--panel); color: var(--primary); border-radius: 6px; padding: 3px 12px; font-size: 12px; }
 .evid-item { display: flex; gap: 8px; align-items: flex-start; padding: 3px 0; }
 .evid-sum { flex: 1; font-size: 13px; }
+.retrieval-trace { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 4px; }
+.trace-section { margin-top: 14px; }
+.trace-section h4 { color: var(--text-1); margin-bottom: 8px; }
+.trace-kv { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 6px 12px; font-size: 13px; }
+.trace-kv span { color: var(--text-3); }
+.trace-kv b { font-weight: 500; overflow-wrap: anywhere; }
+.param-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.param-grid span { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 12px; }
+.trace-hint { margin: 8px 0 0; }
+.score-note { margin: 8px 0 0; color: var(--warn); font-size: 12px; }
+.table-scroll { overflow-x: auto; }
+.trace-table { min-width: 900px; font-size: 12px; background: var(--panel); }
+.trace-table.wide { min-width: 1180px; }
+.trace-table th, .trace-table td { vertical-align: top; }
+.trace-table small { color: var(--text-3); }
+.chunk-id { max-width: 210px; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.pack-item { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-top: 8px; font-size: 12px; }
+.pack-label { margin: 8px 0 3px; color: var(--text-3); }
+.pack-item pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.6; }
+.legacy-note { padding: 10px 0; }
 </style>

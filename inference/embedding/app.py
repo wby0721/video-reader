@@ -6,10 +6,13 @@
 import os
 import threading
 import time
+import asyncio
+from contextlib import asynccontextmanager
 
 import numpy as np
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Union
 
@@ -18,9 +21,22 @@ MODEL_PATH = os.environ.get("EMBEDDING_MODEL_PATH", r"E:\agent_projct\.tools\mod
 # 显存充足（12GB+）可设 EMBEDDING_DEVICE=cuda 提速。
 DEVICE = os.environ.get("EMBEDDING_DEVICE", "cpu")
 
-app = FastAPI(title="Video Agent Embedding (BGE-M3)")
+@asynccontextmanager
+async def lifespan(app):
+    global _ready
+    _ready = False
+    await asyncio.to_thread(_warmup)
+    _ready = True
+    try:
+        yield
+    finally:
+        _ready = False
+
+
+app = FastAPI(title="Video Agent Embedding (BGE-M3)", lifespan=lifespan)
 
 _model = None
+_ready = False
 _load_lock = threading.Lock()
 
 
@@ -31,6 +47,11 @@ def _load():
             if _model is None:
                 from sentence_transformers import SentenceTransformer
                 _model = SentenceTransformer(MODEL_PATH, device=DEVICE or None)
+
+
+def _warmup():
+    _load()
+    _model.encode(["启动预热"], normalize_embeddings=True, batch_size=1)
 
 
 class EmbeddingRequest(BaseModel):
@@ -70,7 +91,9 @@ def embeddings(req: EmbeddingRequest):
 
 @app.get("/health")
 def health():
-    return {"status": "UP", "model": "BGE-M3", "device": DEVICE, "model_path": MODEL_PATH}
+    return JSONResponse(status_code=200 if _ready else 503, content={
+        "status": "UP" if _ready else "STARTING", "ready": _ready,
+        "model": "BGE-M3", "device": DEVICE, "model_path": MODEL_PATH})
 
 
 def _start_backend_watchdog():

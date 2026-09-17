@@ -8,14 +8,14 @@
 ```
 用户浏览器 ──HTTPS(443)──► Nginx 容器（前端静态 + /api 反代）
                             └──► backend 容器(8081) ──► MySQL / Redis / Kafka / MinIO / Qdrant（内网）
-                            └──► embedding(8000) / asr(8001) / ocr(8002) 推理容器（CPU）
+                            └──► embedding(8000) / asr(8001) / ocr(8002) / reranker(8003) 推理容器（CPU）
 ASR 转写：后端 → asr 容器 → 科大讯飞 API（服务器不部署本地 ASR 模型）
 LLM：用户自带 Key（服务器可不配 LLM_API_KEY）
 ```
 
 - 仅 Nginx 暴露 80/443；其余容器只在内网互通（`vr-net`），不映射公网端口
 - 数据持久化：全部挂命名卷（`mysql_data` / `minio_data` 等），容器重建不丢数据
-- BGE-M3 模型在镜像构建期下载并固化（~2GB，走 hf-mirror）
+- BGE-M3 与 bge-reranker-v2-m3 通过 `data/models` 卷挂载，由部署脚本检查和下载
 
 ## 1. 服务器选型
 
@@ -59,6 +59,8 @@ vi .env
 #      scp -r "E:\agent_projct\.tools\models\bge-m3" root@<服务器IP>:/root/video-reader/data/models/
 #    服务器上确认：
 #      ls data/models/bge-m3     # 应看到 pytorch_model.bin / config.json 等
+#      scp -r "E:\agent_projct\.tools\models\bge-reranker-v2-m3" root@<服务器IP>:/root/video-reader/data/models/
+#      ls data/models/bge-reranker-v2-m3
 #    若本机没有该模型，setup-server.sh 会用 huggingface.co / hf-mirror.com 自动尝试下载
 #    （海外服务器连 HF 镜像可能不稳定，上传本机模型是最稳路径）
 

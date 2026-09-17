@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,17 +68,21 @@ public class QdrantVectorStore {
     }
 
     /**
-     * 批量写入索引点。点 ID 用确定性 UUID（由 contentHash+index 派生），
-     * 同内容幂等覆盖、跨用户共享（内容级复用）。index 写入 payload 供检索回映射。
+     * 批量写入索引点。点 ID 包含用户、内容、索引版本与块序号，
+     * 同用户同内容幂等覆盖，跨用户或跨版本绝不覆盖。
      */
-    public void upsert(String contentHash, Long mediaId, List<Point> points) {
+    public void upsert(Long userId, String contentHash, Long mediaId, int indexVersion,
+                       List<Point> points) {
         List<Map<String, Object>> payload = points.stream().map(p -> Map.<String, Object>of(
-                "id", pointId(contentHash, p.index()),
+                "id", pointId(userId, contentHash, indexVersion, p.index()),
                 "vector", p.vector(),
                 "payload", Map.<String, Object>of(
                         "index", p.index(),
+                        "chunkId", p.chunkId(),
+                        "userId", userId,
                         "contentHash", contentHash,
                         "mediaId", mediaId,
+                        "indexVersion", indexVersion,
                         "startMs", p.startMs(),
                         "endMs", p.endMs(),
                         "summary", p.summary(),
@@ -89,16 +94,21 @@ public class QdrantVectorStore {
                 .retrieve().toBodilessEntity();
     }
 
-    /** 确定性点 ID：同 contentHash+index 恒为同一 UUID（幂等 + 内容级共享）。 */
-    public static String pointId(String contentHash, int index) {
-        return UUID.nameUUIDFromBytes((contentHash + "-" + index).getBytes(StandardCharsets.UTF_8)).toString();
+    /** 确定性点 ID：同一用户内按内容共享，跨用户绝不覆盖。 */
+    public static String pointId(Long userId, String contentHash, int indexVersion, int index) {
+        return UUID.nameUUIDFromBytes((userId + ":" + contentHash + ":" + indexVersion + ":" + index)
+                .getBytes(StandardCharsets.UTF_8)).toString();
     }
 
-    /** 向量检索，返回 (index, 相似度) 列表（相似度 0-1）。 */
-    public List<Hit> search(List<Float> vector, int limit) {
+    /**
+     * 向量检索。userId 永远必选；contentHash 非空时进一步限定到当前视频内容，
+     * 防止其他视频（包括其他用户的视频）用相同 chunk index 污染当前排序。
+     */
+    public List<Hit> search(List<Float> vector, int limit, Long userId, String contentHash,
+                            int indexVersion) {
         JsonNode body = client.post().uri("/collections/{name}/points/search", COLLECTION)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("vector", vector, "limit", limit, "with_payload", true))
+                .body(searchRequestBody(vector, limit, userId, contentHash, indexVersion))
                 .retrieve().body(JsonNode.class);
         if (body == null) {
             return List.of();
@@ -108,6 +118,7 @@ public class QdrantVectorStore {
             JsonNode payload = h.path("payload");
             hits.add(new Hit(
                     payload.path("index").asInt(-1),
+                    payload.path("chunkId").asText(null),
                     h.path("score").asDouble(),
                     payload.path("startMs").asLong(),
                     payload.path("endMs").asLong(),
@@ -117,9 +128,28 @@ public class QdrantVectorStore {
         return hits;
     }
 
+    /** 包级可见，供请求范围回归测试直接验证。 */
+    static Map<String, Object> searchRequestBody(List<Float> vector, int limit,
+                                                 Long userId, String contentHash, int indexVersion) {
+        List<Map<String, Object>> must = new ArrayList<>();
+        must.add(Map.of("key", "userId", "match", Map.of("value", userId)));
+        if (contentHash != null && !contentHash.isBlank()) {
+            must.add(Map.of("key", "contentHash", "match", Map.of("value", contentHash)));
+        }
+        must.add(Map.of("key", "indexVersion", "match", Map.of("value", indexVersion)));
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("vector", vector);
+        body.put("limit", Math.max(1, limit));
+        body.put("with_payload", true);
+        body.put("filter", Map.of("must", must));
+        return body;
+    }
+
     /** 索引点。 */
-    public record Point(int index, long startMs, long endMs, String summary, List<String> keywords, List<Float> vector) {}
+    public record Point(int index, String chunkId, long startMs, long endMs,
+                        String summary, List<String> keywords, List<Float> vector) {}
 
     /** 检索命中（index 为分块序号）。 */
-    public record Hit(int index, double score, long startMs, long endMs, String summary, List<String> keywords) {}
+    public record Hit(int index, String chunkId, double score, long startMs, long endMs,
+                      String summary, List<String> keywords) {}
 }

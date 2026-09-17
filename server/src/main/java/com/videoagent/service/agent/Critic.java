@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.videoagent.dto.AgentPlan;
 import com.videoagent.dto.AnalysisResult;
 import com.videoagent.dto.CriticResult;
+import com.videoagent.dto.RetrievalAction;
 import com.videoagent.dto.VerificationReport;
 import com.videoagent.utils.LlmClient;
 import org.slf4j.Logger;
@@ -60,8 +61,12 @@ public class Critic {
                 - 每条反馈控制在 60 字内，避免空泛的"证据不足"。
                 %s
                 %s
+                下一轮检索动作只能选一个：
+                - REUSE：证据已足够，只需修改格式、措辞或结论；
+                - ADD_TIMESTAMP：已知应补充的时间位置，填写 requiredTimestamps，不重新搜索；
+                - SEARCH：现有证据确实缺内容，必须填写新的、可执行的 searchQueries。
                 只输出 JSON：
-                {"passed":true/false,"feedback":["可执行的修改建议"],"missingRequirements":["..."],"unsupportedClaims":["..."],"requiredTimestamps":[12345]}
+                {"passed":true/false,"feedback":["可执行的修改建议"],"missingRequirements":["..."],"unsupportedClaims":["..."],"requiredTimestamps":[12345],"retrievalAction":"REUSE|ADD_TIMESTAMP|SEARCH","searchQueries":["新的检索问题"]}
                 计划任务：%s
                 可用证据时间戳：%s
                 产出：%s
@@ -76,13 +81,17 @@ public class Critic {
             node.path("requiredTimestamps").forEach(t -> timestamps.add(t.asLong(-1)));
             timestamps.removeIf(t -> t < 0);
             boolean passed = node.path("passed").asBoolean(false);
+            RetrievalAction action = RetrievalAction.parse(node.path("retrievalAction").asText(""));
+            List<String> searchQueries = strings(node, "searchQueries");
             if (passed && (missing.isEmpty() && unsupported.isEmpty() && feedback.isEmpty())) {
                 return CriticResult.ok();
             }
-            return new CriticResult(passed, feedback, missing, unsupported, timestamps);
+            return new CriticResult(passed, feedback, missing, unsupported, timestamps,
+                    action, searchQueries);
         } catch (Exception e) {
             log.warn("Critic 解析失败，按不通过处理: {}", e.getMessage());
-            return new CriticResult(false, List.of("Critic 解析异常，请重试"), List.of(), List.of(), List.of());
+            return new CriticResult(false, List.of("Critic 解析异常，请重试"),
+                    List.of(), List.of(), List.of(), RetrievalAction.REUSE, List.of());
         }
     }
 

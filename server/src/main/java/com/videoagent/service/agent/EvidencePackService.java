@@ -2,6 +2,10 @@ package com.videoagent.service.agent;
 
 import com.videoagent.dto.AgentPlan;
 import com.videoagent.dto.EvidenceHit;
+import com.videoagent.dto.EvidenceBounds;
+import com.videoagent.dto.RetrievalAssessment;
+import com.videoagent.service.retrieval.RelevancePolicy;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.videoagent.dto.VideoChunk;
 import com.videoagent.dto.VideoContext;
 import com.videoagent.dto.VideoSegment;
@@ -39,10 +43,18 @@ public class EvidencePackService {
 
     private final VideoEvidenceRetrievalService retrievalService;
     private final RetrievalIndexService indexService;
+    private final RelevancePolicy relevancePolicy;
 
     public EvidencePackService(VideoEvidenceRetrievalService retrievalService, RetrievalIndexService indexService) {
+        this(retrievalService, indexService, new RelevancePolicy());
+    }
+
+    @Autowired
+    public EvidencePackService(VideoEvidenceRetrievalService retrievalService, RetrievalIndexService indexService,
+                               RelevancePolicy relevancePolicy) {
         this.retrievalService = retrievalService;
         this.indexService = indexService;
+        this.relevancePolicy = relevancePolicy;
     }
 
     /**
@@ -53,19 +65,49 @@ public class EvidencePackService {
      */
     public EvidencePack build(Long mediaId, String contentHash, VideoContext context, List<VideoChunk> chunks,
                               List<String> tasks, List<Long> required, Long userId) {
+        return build(new RetrievalSession(mediaId, RetrievalIndexService.INDEX_VERSION),
+                contentHash, context, chunks, tasks, required, userId);
+    }
+
+    /** Agent 多轮共用同一个 session；相同规范化查询只在首次出现时执行完整 RAG。 */
+    public EvidencePack build(RetrievalSession session, String contentHash, VideoContext context,
+                              List<VideoChunk> chunks, List<String> tasks,
+                              List<Long> required, Long userId) {
         List<EvidenceItem> items = new ArrayList<>();
         Set<Long> seen = new LinkedHashSet<>();
+        Set<String> seenChunks = new LinkedHashSet<>();
+        Map<String, RetrievalAssessment> assessments = new java.util.LinkedHashMap<>();
 
         if (tasks != null) {
+            Map<String, List<EvidenceHit>> hitsByTask = session.cachedOrSearchAll(tasks, missing -> {
+                var prepared = retrievalService.searchNoRewriteBatchPrepared(session.mediaId(), contentHash,
+                        context, missing, CHUNKS_PER_TASK, userId);
+                Map<String, List<EvidenceHit>> raw = new java.util.LinkedHashMap<>();
+                prepared.forEach((q, result) -> {
+                    session.recordDiagnostics(q, result.denseSource());
+                    raw.put(q, result.hits());
+                });
+                return raw;
+            });
             for (String task : tasks) {
-                // 任务本身已足够具体，跳过意图改写（省 LLM 调用）
-                List<EvidenceHit> hits = retrievalService.searchNoRewrite(
-                        mediaId, contentHash, context, task, CHUNKS_PER_TASK, userId);
+                if (task == null || task.isBlank()) {
+                    continue;
+                }
+                // 任务本身已足够具体，跳过意图改写；缓存未命中的任务在上面微批处理
+                RelevancePolicy.Decision decision = relevancePolicy.evaluate(
+                        hitsByTask.getOrDefault(task, List.of()), session.diagnostics(task));
+                assessments.put(task, decision.assessment());
+                List<EvidenceHit> hits = decision.hits();
                 for (EvidenceHit hit : hits) {
-                    if (!seen.add(hit.startMs())) {
+                    String hitKey = hit.chunkId() == null ? "ts:" + hit.startMs() : hit.chunkId();
+                    if (!seenChunks.add(hitKey)) {
                         continue;
                     }
-                    VideoChunk chunk = findChunk(chunks, hit.startMs());
+                    VideoChunk chunk = findChunk(chunks, hit.chunkId(), hit.startMs());
+                    // Do not pass an index summary off as original evidence when raw content is missing.
+                    if (chunk == null) continue;
+                    session.addEvidence(chunk);
+                    seen.add(hit.startMs());
                     items.add(toItem(chunk, hit));
                     if (items.size() >= MAX_TASK_CHUNKS) {
                         break;
@@ -81,18 +123,23 @@ public class EvidencePackService {
         // （不能因任务项已占满而提前返回——否则 600000/900000 这类被点名的时间戳永远缺席，轮次空转）
         if (required != null) {
             for (long ts : required) {
-                VideoChunk chunk = findChunk(chunks, ts);
-                if (chunk == null || !seen.add(chunk.startTime())) {
+                VideoChunk chunk = findChunk(chunks, null, ts);
+                String chunkKey = chunk == null || chunk.chunkId() == null
+                        ? "ts:" + (chunk == null ? ts : chunk.startTime()) : chunk.chunkId();
+                if (chunk == null || !seenChunks.add(chunkKey)) {
                     continue;
                 }
-                items.add(new EvidenceItem(chunk.startTime(), chunk.endTime(), "TARGETED",
+                seen.add(EvidenceBounds.of(chunk).startMs());
+                session.addEvidence(chunk);
+                EvidenceBounds bounds = EvidenceBounds.of(chunk);
+                items.add(new EvidenceItem(bounds.startMs(), bounds.endMs(), "TARGETED",
                         trim(chunk.transcript(), TARGETED_CAP), chunk.rawSegments()));
                 if (items.size() >= MAX_TASK_CHUNKS + MAX_TARGETED_CHUNKS) {
                     break;
                 }
             }
         }
-        return new EvidencePack(items, seen);
+        return new EvidencePack(items, seen, assessments);
     }
 
     private static EvidenceItem toItem(VideoChunk chunk, EvidenceHit hit) {
@@ -106,16 +153,24 @@ public class EvidencePackService {
             content += "\n画面文字：" + trim(String.join("；", chunk.visualTexts()), VISUAL_CAP);
         }
         // rawSegments 供证据绑定回精确的 ASR 片段时间戳（而非块级粗粒度）
-        return new EvidenceItem(chunk.startTime(), chunk.endTime(), "ASR+OCR", content, chunk.rawSegments());
+        EvidenceBounds bounds = EvidenceBounds.of(chunk);
+        return new EvidenceItem(bounds.startMs(), bounds.endMs(), "ASR+OCR", content, chunk.rawSegments());
     }
 
-    private static VideoChunk findChunk(List<VideoChunk> chunks, long tsMs) {
+    private static VideoChunk findChunk(List<VideoChunk> chunks, String chunkId, long tsMs) {
         if (chunks == null) {
             return null;
         }
+        if (chunkId != null && !chunkId.isBlank()) {
+            return chunks.stream()
+                    .filter(c -> chunkId.equals(c.chunkId()))
+                    .findFirst().orElse(null);
+        }
         return chunks.stream()
-                .filter(c -> tsMs >= c.startTime() && tsMs < c.endTime())
-                .findFirst().orElse(null);
+                .filter(c -> tsMs >= EvidenceBounds.of(c).startMs() && tsMs < EvidenceBounds.of(c).endMs())
+                .min(java.util.Comparator.comparingLong(c ->
+                        Math.abs(tsMs - (c.startTime() + c.endTime()) / 2)))
+                .orElse(null);
     }
 
     private static String trim(String s, int cap) {
@@ -123,12 +178,20 @@ public class EvidencePackService {
     }
 
     /** Agent 视角的证据包（紧凑文本，控制 Token）。 */
-    public record EvidencePack(List<EvidenceItem> items, Set<Long> coveredTimestamps) {
+    public record EvidencePack(List<EvidenceItem> items, Set<Long> coveredTimestamps,
+                               Map<String, RetrievalAssessment> retrieval) {
+        public EvidencePack(List<EvidenceItem> items, Set<Long> coveredTimestamps) {
+            this(items, coveredTimestamps, Map.of());
+        }
         public String toPromptText() {
+            StringBuilder diagnostics = new StringBuilder("检索到片段不等于任务可回答；缺少明确原文支持时必须说明不足。\n");
+            if (retrieval != null) retrieval.forEach((task, assessment) -> diagnostics
+                    .append("任务：").append(task).append(" 状态：").append(assessment.status())
+                    .append(" ").append(assessment.hint()).append('\n'));
             if (items == null || items.isEmpty()) {
-                return "（未召回任何证据片段）";
+                return diagnostics + "（未召回任何证据片段）";
             }
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = diagnostics;
             int i = 0;
             for (EvidenceItem item : items) {
                 sb.append(String.format("[证据%d] 时间 %dms~%dms 来源=%s%n%s%n",

@@ -5,6 +5,7 @@ import com.videoagent.dto.AnalysisMode;
 import com.videoagent.dto.AnalysisResult;
 import com.videoagent.dto.CriticResult;
 import com.videoagent.dto.EvaluationReport;
+import com.videoagent.dto.RetrievalAction;
 import com.videoagent.dto.VideoChunk;
 import com.videoagent.dto.VideoContext;
 import com.videoagent.dto.VerificationReport;
@@ -26,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +36,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Agent 核心循环（方案 §6.3）：Planner → Executor → Critic，≤2 轮。
+ * Agent 核心循环（方案 §6.3）：Planner → Executor → Critic，最多 3 轮（round 0~2）。
  *
  * <ul>
  *   <li>证据约束：Executor 输入仅含检索 TopK 证据包，结论必须绑定时间戳证据；</li>
@@ -132,9 +135,13 @@ public class AgentLoopService {
             return p;
         });
 
+        RetrievalSession retrievalSession = new RetrievalSession(
+                mediaId, RetrievalIndexService.INDEX_VERSION);
+        List<String> accumulatedQueries = new ArrayList<>(plan.tasks());
+
         // 2) 循环：Executor → Critic（≤MAX_ROUNDS 轮，反馈驱动定向补证据）
         String feedback = null;
-        List<Long> requiredTimestamps = List.of();
+        Set<Long> requiredTimestamps = new LinkedHashSet<>();
         Set<Long> requestedUnavailable = new HashSet<>(); // 视频中不存在的时间戳：过滤掉，防止 Critic 每轮重复请求空转
         AnalysisResult lastResult = null;
         String lastCriticFeedback = "";
@@ -149,18 +156,29 @@ public class AgentLoopService {
             final List<Long> req = requiredTimestamps.stream()
                     .filter(ts -> !requestedUnavailable.contains(ts)).toList();
 
+            int queriesBefore = retrievalSession.retrievalQueries();
+            long retrievalStarted = System.currentTimeMillis();
             EvidencePackService.EvidencePack pack = evidencePackService.build(
-                    mediaId, media.getContentHash(), context, chunks, plan.tasks(), req, userId);
+                    retrievalSession, media.getContentHash(), context, chunks,
+                    List.copyOf(accumulatedQueries), req, userId);
+            checkpointService.save(mediaId, goalKey + "-retrieval-" + r, "RETRIEVED", pack.retrieval());
+            int newQueries = retrievalSession.retrievalQueries() - queriesBefore;
+            if (newQueries > 0) {
+                telemetry.retrievalStage("retrieval-r" + r,
+                        System.currentTimeMillis() - retrievalStarted, newQueries);
+            }
 
             // 记录本轮定向请求中「视频里不存在」的时间戳，后续轮次不再重复请求
             for (Long ts : req) {
-                if (chunks.stream().noneMatch(c -> ts >= c.startTime() && ts < c.endTime())) {
+                if (chunks.stream().noneMatch(c -> ts >= com.videoagent.dto.EvidenceBounds.of(c).startMs()
+                        && ts < com.videoagent.dto.EvidenceBounds.of(c).endMs())) {
                     requestedUnavailable.add(ts);
                 }
             }
 
             AnalysisResult result = loadOr(mediaId, goalKey + "-executor-" + r, AnalysisResult.class, () -> {
-                events.publish(mediaId, "AGENT_EXECUTE", Map.of("round", r, "evidenceItems", pack.items().size()));
+                events.publish(mediaId, "AGENT_EXECUTE", Map.of("round", r, "evidenceItems", pack.items().size(),
+                        "retrieval", pack.retrieval()));
                 long t0 = System.currentTimeMillis();
                 AnalysisResult res = executor.execute(model, plan, pack, profile, fb);
                 telemetry.stage("executor-r" + r, System.currentTimeMillis() - t0, 1, est(res));
@@ -191,7 +209,8 @@ public class AgentLoopService {
             });
             lastCriticFeedback = String.join("；", critique.feedback());
             events.publish(mediaId, "AGENT_CRITIC_RESULT", Map.of("round", r, "passed", critique.passed(),
-                    "missing", critique.missingRequirements().size(), "unsupported", critique.unsupportedClaims().size()));
+                    "missing", critique.missingRequirements().size(), "unsupported", critique.unsupportedClaims().size(),
+                    "retrievalAction", critique.retrievalAction().name()));
 
             if (critique.passed() || r >= MAX_ROUNDS) {
                 String warning = null;
@@ -219,7 +238,13 @@ public class AgentLoopService {
                 return finalResult;
             }
             feedback = String.join("\n", critique.feedback());
-            requiredTimestamps = critique.requiredTimestamps();
+            if (critique.retrievalAction() == RetrievalAction.SEARCH) {
+                critique.searchQueries().stream()
+                        .filter(q -> q != null && !q.isBlank())
+                        .forEach(accumulatedQueries::add);
+            } else if (critique.retrievalAction() == RetrievalAction.ADD_TIMESTAMP) {
+                requiredTimestamps.addAll(critique.requiredTimestamps());
+            }
             events.publish(mediaId, "AGENT_ROUND", Map.of("round", r + 1, "feedback", critique.feedback().size()));
             round++;
         }

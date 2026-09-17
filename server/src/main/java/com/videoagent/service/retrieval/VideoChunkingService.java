@@ -4,65 +4,89 @@ import com.videoagent.dto.VideoChunk;
 import com.videoagent.dto.VideoContext;
 import com.videoagent.dto.VideoSegment;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HexFormat;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 5 分钟知识块分块（纯函数）：把时序多模态 VideoContext 按 5 分钟窗口聚合为检索单元。
+ * 重叠知识块分块（纯函数）：把时序多模态 VideoContext 聚合为短检索单元。
  *
- * <p>窗口边界固定（0-300s、300-600s…），窗口内片段合并语音转写、汇总画面文字，
- * 保留原始片段用于证据回溯。摘要与关键词由 {@link ChunkEnricher} 生成。
+ * <p>默认窗口 90 秒、重叠 15 秒。窗口内合并语音转写、汇总画面文字，
+ * 保留完整原始片段用于证据回溯。摘要与关键词由 {@link ChunkEnricher} 生成。
  */
 public final class VideoChunkingService {
 
-    /** 5 分钟知识块（毫秒） */
-    public static final long CHUNK_MS = 5 * 60_000L;
+    public static final long CHUNK_MS = 90_000L;
+    public static final long OVERLAP_MS = 15_000L;
+    public static final long STEP_MS = CHUNK_MS - OVERLAP_MS;
+    private static final long MIN_TAIL_MS = 15_000L;
 
     private VideoChunkingService() {
     }
 
-    public static List<VideoChunk> chunk(VideoContext context) {
+    public static List<VideoChunk> chunk(VideoContext context, Long userId, String contentHash,
+                                         int indexVersion) {
         List<VideoSegment> segments = context.segments() == null ? List.of() : context.segments();
         if (segments.isEmpty()) {
             return List.of();
         }
         long minStart = segments.stream().mapToLong(VideoSegment::startMs).min().orElse(0);
         long maxEnd = segments.stream().mapToLong(VideoSegment::endMs).max().orElse(minStart + CHUNK_MS);
-        long firstWindow = (minStart / CHUNK_MS) * CHUNK_MS;
-        long lastWindow = ((maxEnd + CHUNK_MS - 1) / CHUNK_MS) * CHUNK_MS;
-
-        Map<Long, List<VideoSegment>> byWindow = new LinkedHashMap<>();
-        for (VideoSegment seg : segments) {
-            long window = (seg.startMs() / CHUNK_MS) * CHUNK_MS;
-            byWindow.computeIfAbsent(window, k -> new ArrayList<>()).add(seg);
-        }
+        long firstWindow = (minStart / STEP_MS) * STEP_MS;
 
         List<VideoChunk> chunks = new ArrayList<>();
-        for (long w = firstWindow; w <= lastWindow; w += CHUNK_MS) {
-            List<VideoSegment> windowSegments = byWindow.getOrDefault(w, List.of());
+        int chunkIndex = 0;
+        for (long windowStart = firstWindow; windowStart < maxEnd; windowStart += STEP_MS) {
+            // 不创建已经被上一窗口完整覆盖的极短尾窗。
+            if (windowStart > firstWindow && maxEnd - windowStart <= MIN_TAIL_MS) {
+                break;
+            }
+            long nominalEnd = Math.min(windowStart + CHUNK_MS, maxEnd);
+            List<VideoSegment> windowSegments = new ArrayList<>();
+            for (VideoSegment segment : segments) {
+                if (segment.endMs() > windowStart && segment.startMs() < nominalEnd) {
+                    windowSegments.add(segment);
+                }
+            }
             if (windowSegments.isEmpty()) {
                 continue;
             }
-            long start = w;
-            long end = windowSegments.stream().mapToLong(VideoSegment::endMs).max().orElse(w + CHUNK_MS);
+
+            // 单个 ASR 片段跨过窗口边界时保留完整片段，避免切断语句。
+            long chunkEnd = Math.max(nominalEnd,
+                    windowSegments.stream().mapToLong(VideoSegment::endMs).max().orElse(nominalEnd));
             StringBuilder transcript = new StringBuilder();
-            List<String> visual = new ArrayList<>();
-            for (VideoSegment seg : windowSegments) {
-                if (seg.transcript() != null && !seg.transcript().isBlank()) {
+            List<String> visualTexts = new ArrayList<>();
+            for (VideoSegment segment : windowSegments) {
+                if (segment.transcript() != null && !segment.transcript().isBlank()) {
                     if (!transcript.isEmpty()) {
                         transcript.append(' ');
                     }
-                    transcript.append(seg.transcript());
+                    transcript.append(segment.transcript());
                 }
-                if (seg.ocrTexts() != null) {
-                    visual.addAll(seg.ocrTexts());
+                if (segment.ocrTexts() != null) {
+                    visualTexts.addAll(segment.ocrTexts());
                 }
             }
-            chunks.add(VideoChunk.of(start, end, null, List.of(), transcript.toString(),
-                    visual.stream().distinct().toList(), windowSegments, null));
+
+            String chunkId = chunkId(userId, contentHash, indexVersion, windowStart, chunkEnd);
+            chunks.add(VideoChunk.indexed(windowStart, chunkEnd, transcript.toString(),
+                    visualTexts.stream().distinct().toList(), windowSegments,
+                    chunkId, chunkIndex++, contentHash, indexVersion));
         }
         return chunks;
+    }
+
+    static String chunkId(Long userId, String contentHash, int indexVersion,
+                          long startMs, long endMs) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String source = userId + ":" + contentHash + ":" + indexVersion + ":" + startMs + ":" + endMs;
+            return HexFormat.of().formatHex(digest.digest(source.getBytes(StandardCharsets.UTF_8)));
+        } catch (Exception e) {
+            throw new IllegalStateException("无法生成 chunkId", e);
+        }
     }
 }

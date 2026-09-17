@@ -15,6 +15,7 @@ public record AppProperties(
         Minio minio,
         Qdrant qdrant,
         RateLimit rateLimit,
+        Retrieval retrieval,
         Ai ai,
         Ffmpeg ffmpeg,
         Llm llm,
@@ -36,8 +37,21 @@ public record AppProperties(
     /** 令牌桶限流（成本护栏） */
     public record RateLimit(long userRps, long globalRps) {}
 
+    /** 本地检索索引。 */
+    public record Retrieval(String lucenePath, Double minRerankerScore, Boolean rejectLowRelevance) {
+        @org.springframework.boot.context.properties.bind.ConstructorBinding
+        public Retrieval {
+            minRerankerScore = minRerankerScore == null ? .5 : minRerankerScore;
+            rejectLowRelevance = Boolean.TRUE.equals(rejectLowRelevance);
+            if (!Double.isFinite(minRerankerScore) || minRerankerScore < 0 || minRerankerScore > 1) {
+                throw new IllegalArgumentException("min-reranker-score must be within [0,1]");
+            }
+        }
+        public Retrieval(String lucenePath) { this(lucenePath, .5, false); }
+    }
+
     /** AI 服务接入配置（真实服务，环境变量注入） */
-    public record Ai(Llm llm, Embedding embedding, Asr asr, Ocr ocr) {
+    public record Ai(Llm llm, Embedding embedding, Asr asr, Ocr ocr, Reranker reranker) {
 
         /** LLM：DeepSeek，OpenAI 兼容接口 */
         public record Llm(String baseUrl, String apiKey, String model) {}
@@ -50,6 +64,16 @@ public record AppProperties(
 
         /** OCR：本地 PaddleOCR 独立推理服务 */
         public record Ocr(String baseUrl) {}
+
+        /** Cross-Encoder：本地 BGE reranker 推理服务。 */
+        public record Reranker(String baseUrl, Integer readTimeoutMs) {
+            @org.springframework.boot.context.properties.bind.ConstructorBinding
+            public Reranker {
+                readTimeoutMs = readTimeoutMs == null ? 60_000 : readTimeoutMs;
+                if (readTimeoutMs < 1) throw new IllegalArgumentException("reranker read timeout must be positive");
+            }
+            public Reranker(String baseUrl) { this(baseUrl, 60_000); }
+        }
     }
 
     /** FFmpeg 可执行文件路径（阶段二视频预处理） */

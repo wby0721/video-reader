@@ -5,10 +5,11 @@ package com.videoagent.dto;
  */
 public record GlobalEvidenceHit(
         Long mediaId,
+        String title,
         String filename,
+        String chunkId,
         long startMs,
         long endMs,
         String summary,
-        double score,
-        String source
+        java.util.List<String> keywords
 ) {}

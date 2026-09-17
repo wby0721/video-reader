@@ -15,6 +15,10 @@ import com.videoagent.dto.AnalysisSubmitResponse;
 import com.videoagent.dto.AnalysisTaskMessage;
 import com.videoagent.dto.AgentPlan;
 import com.videoagent.dto.ChatEntry;
+import com.videoagent.dto.ChatEvidence;
+import com.videoagent.dto.ChatHistoryActionRequest;
+import com.videoagent.dto.RetrievalAssessment;
+import com.videoagent.dto.RetrievalTrace;
 import com.videoagent.dto.ChatRequest;
 import com.videoagent.dto.CriticResult;
 import com.videoagent.dto.EvaluationReport;
@@ -29,12 +33,18 @@ import com.videoagent.entity.MediaFile;
 import com.videoagent.repository.AnalysisFeedbackRepository;
 import com.videoagent.repository.MediaFileRepository;
 import com.videoagent.service.CheckpointService;
+import com.videoagent.service.ChatHistoryViewService;
 import com.videoagent.service.StageEventPublisher;
 import com.videoagent.service.agent.AgentLoopService;
 import com.videoagent.service.ai.LlmProvider;
 import com.videoagent.service.auth.RateLimitService;
 import com.videoagent.service.ingest.VideoContextService;
 import com.videoagent.service.retrieval.VideoEvidenceRetrievalService;
+import com.videoagent.service.retrieval.GlobalKnowledgeSearchService;
+import com.videoagent.service.retrieval.ChatEvidenceService;
+import com.videoagent.service.retrieval.HybridQuery;
+import com.videoagent.service.retrieval.QueryRewriter;
+import com.videoagent.utils.LlmClient;
 import com.videoagent.utils.CurrentUser;
 import org.redisson.api.RedissonClient;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +63,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +81,8 @@ import java.util.Map;
 @RequestMapping("/analysis")
 public class AnalysisController {
 
+    private static final int CHAT_ANSWER_MAX_TOKENS = 1_200;
+
     private static final Logger log = LoggerFactory.getLogger(AnalysisController.class);
 
     private final MediaFileRepository mediaFileRepository;
@@ -88,6 +99,10 @@ public class AnalysisController {
     private final com.videoagent.service.eval.AgentEvaluationService evaluationService;
     private final com.videoagent.service.trust.FidelityChecker fidelityChecker;
     private final LlmProvider llmProvider;
+    private final GlobalKnowledgeSearchService globalKnowledgeSearchService;
+    private final QueryRewriter queryRewriter;
+    private final ChatEvidenceService chatEvidenceService;
+    private final ChatHistoryViewService chatHistoryViewService;
 
     public AnalysisController(MediaFileRepository mediaFileRepository, CheckpointService checkpointService,
                               StageEventPublisher events, RateLimitService rateLimitService,
@@ -98,7 +113,11 @@ public class AnalysisController {
                               com.videoagent.service.eval.AgentTelemetry telemetry,
                               com.videoagent.service.eval.AgentEvaluationService evaluationService,
                               com.videoagent.service.trust.FidelityChecker fidelityChecker,
-                              LlmProvider llmProvider) {
+                              LlmProvider llmProvider,
+                              GlobalKnowledgeSearchService globalKnowledgeSearchService,
+                              QueryRewriter queryRewriter,
+                              ChatEvidenceService chatEvidenceService,
+                              ChatHistoryViewService chatHistoryViewService) {
         this.mediaFileRepository = mediaFileRepository;
         this.checkpointService = checkpointService;
         this.events = events;
@@ -113,11 +132,13 @@ public class AnalysisController {
         this.evaluationService = evaluationService;
         this.fidelityChecker = fidelityChecker;
         this.llmProvider = llmProvider;
+        this.globalKnowledgeSearchService = globalKnowledgeSearchService;
+        this.queryRewriter = queryRewriter;
+        this.chatEvidenceService = chatEvidenceService;
+        this.chatHistoryViewService = chatHistoryViewService;
     }
 
     private static final String LAST_GOAL_KEY = "analysis:last-goal";
-    private static final String CP_CHAT = "media-chat";
-    private static final TypeReference<List<ChatEntry>> CHAT_LIST_TYPE = new TypeReference<>() {};
 
     @PostMapping
     public ResponseEntity<ApiResponse<AnalysisSubmitResponse>> submit(@Valid @RequestBody AnalysisSubmitRequest request,
@@ -413,41 +434,62 @@ public class AnalysisController {
         VideoContext context = checkpointService.loadVideoContext(request.mediaId())
                 .orElseThrow(() -> new BusinessException(404, "上下文尚未生成，请先完成分析"));
 
-        // 持久化对话历史（media 级 Checkpoint）
-        List<ChatEntry> history = checkpointService
-                .load(request.mediaId(), CP_CHAT, CHAT_LIST_TYPE).orElse(new ArrayList<>());
-        history.add(new ChatEntry("user", request.query(), System.currentTimeMillis(), List.of()));
+        // 先用已有历史消解指代；此时不要把当前问题重复放进历史。
+        // media-chat 是不可删除审计历史；工作台显示/连续改写只读取未被清空或撤销的记录。
+        List<ChatEntry> auditHistory = chatHistoryViewService.audit(request.mediaId());
+        List<ChatEntry> visibleHistory = chatHistoryViewService.visible(request.mediaId(), auditHistory);
+        LlmClient model = llmProvider.forUser(userId);
+        if (model == null) {
+            throw new BusinessException(400, "请先在个人设置中配置 LLM API Key");
+        }
+        String videoTitle = media.getTitle() == null || media.getTitle().isBlank()
+                ? media.getFilename() : media.getTitle();
+        QueryRewriter.ConversationRewrite rewritten = queryRewriter.rewriteConversation(
+                request.query(), visibleHistory, videoTitle, model);
+        auditHistory.add(new ChatEntry("user", request.query(), System.currentTimeMillis(), List.of()));
 
-        List<EvidenceHit> hits = retrievalService.searchNoRewrite(
-                request.mediaId(), media.getContentHash(), context, request.query(), 5, userId);
-        if (hits.isEmpty()) {
-            history.add(new ChatEntry("assistant", "视频中没有找到与这个问题相关的内容。",
-                    System.currentTimeMillis(), List.of()));
-            checkpointService.save(request.mediaId(), CP_CHAT, "CHAT", history);
-            return ApiResponse.ok(new ChatResponse("视频中没有找到与这个问题相关的内容。", history));
+        VideoEvidenceRetrievalService.PreparedSearch search = retrievalService.searchPrepared(
+                request.mediaId(), media.getContentHash(), context,
+                new HybridQuery(request.query(), rewritten.semanticQuery(),
+                        rewritten.keywords(), rewritten.ocrKeywords()), 5, userId);
+        ChatEvidenceService.PreparedEvidence prepared = chatEvidenceService.prepare(request.mediaId(), search);
+        List<EvidenceHit> hits = prepared.hits();
+        List<ChatEvidence> evidence = prepared.evidence();
+        RetrievalAssessment assessment = prepared.retrieval();
+        RetrievalTrace retrievalTrace = prepared.trace() == null ? null : prepared.trace()
+                .withConversationRewrite(rewritten.standaloneQuestion(), rewritten.semanticQuery(),
+                        rewritten.keywords(), rewritten.ocrKeywords());
+        if (evidence.isEmpty()) {
+            String unavailable = assessment.degraded()
+                    ? "检索服务暂时降级，未能获得可用证据，请稍后重试。"
+                    : "本次没有获得足够相关的视频证据，无法据此回答这个问题。";
+            auditHistory.add(new ChatEntry("assistant", unavailable,
+                    System.currentTimeMillis(), List.of(), assessment, List.of(), retrievalTrace));
+            chatHistoryViewService.saveAudit(request.mediaId(), auditHistory);
+            List<ChatEntry> responseHistory = chatHistoryViewService.visible(request.mediaId(), auditHistory);
+            return ApiResponse.ok(new ChatResponse(
+                    unavailable, List.of(), true, responseHistory, assessment));
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("你是视频内容问答助手。请基于下面给出的视频片段摘要，用自然连贯的段落回答用户的问题。\n");
-        sb.append("要求：直接给出答案，不要列出片段编号、时间戳或任何置信度分数；若摘要不足，如实说明。\n");
-        List<ChatEntry> contextTurns = history.size() > 7
-                ? history.subList(history.size() - 7, history.size()) : history;
-        if (!contextTurns.isEmpty()) {
-            sb.append("\n历史对话（供理解上下文）：\n");
-            for (ChatEntry t : contextTurns) {
-                sb.append(t.role()).append("：").append(t.content()).append('\n');
-            }
-        }
-        sb.append("\n用户问题：").append(request.query()).append('\n');
-        sb.append("\n视频片段摘要：\n");
-        for (EvidenceHit h : hits) {
-            sb.append("- ").append(trim(h.summary(), 400)).append('\n');
-        }
-        String answer = llmProvider.forUser(userId).chat(sb.toString(), 500);
+        sb.append("你是视频内容问答助手，只能根据 EvidencePack 中的视频原文回答。\n")
+                .append("证据不足时必须明确说明；不要把外部常识冒充为视频内容。")
+                .append("关键结论用[证据1]这样的编号标注来源，不展示检索分数。\n")
+                .append("EvidencePack只是本次检索到的候选，不代表视频全文；未在候选中出现的内容，")
+                .append("只能说当前证据不足，不能断言整段视频绝对没有提及。\n")
+                .append("如果用户询问视频总体内容，请表述为‘根据当前召回片段，视频主要……’，")
+                .append("只概括证据实际覆盖的主题。回答应完整收尾，普通回答尽量控制在800个中文字符内。\n")
+                .append("检索状态：").append(assessment.status()).append("。")
+                .append(assessment.hint()).append('\n')
+                .append("独立问题：").append(rewritten.standaloneQuestion()).append("\n\nEvidencePack:\n")
+                .append(chatEvidenceService.toPromptText(videoTitle, evidence));
+        String answer = model.chat(sb.toString(), CHAT_ANSWER_MAX_TOKENS);
         String ans = answer == null ? "" : answer.strip();
-        history.add(new ChatEntry("assistant", ans, System.currentTimeMillis(), hits));
-        checkpointService.save(request.mediaId(), CP_CHAT, "CHAT", history);
-        return ApiResponse.ok(new ChatResponse(ans, history));
+        auditHistory.add(new ChatEntry("assistant", ans, System.currentTimeMillis(), hits, assessment,
+                evidence, retrievalTrace));
+        chatHistoryViewService.saveAudit(request.mediaId(), auditHistory);
+        List<ChatEntry> responseHistory = chatHistoryViewService.visible(request.mediaId(), auditHistory);
+        return ApiResponse.ok(new ChatResponse(ans, evidence, false, responseHistory, assessment));
     }
 
     /** 对话历史（持久化）：供工作台恢复聊天 + 可信度 trace「问答」页展示。 */
@@ -456,45 +498,58 @@ public class AnalysisController {
         Long userId = CurrentUser.userId(http);
         mediaFileRepository.findByIdAndUserId(mediaId, userId)
                 .orElseThrow(() -> new BusinessException(404, "媒体不存在"));
-        return ApiResponse.ok(checkpointService.load(mediaId, CP_CHAT, CHAT_LIST_TYPE).orElse(List.of()));
+        return ApiResponse.ok(chatHistoryViewService.audit(mediaId));
     }
 
-    private static String trim(String s, int cap) {
-        return s == null ? "" : (s.length() > cap ? s.substring(0, cap) : s);
+    /** 工作台追问框可见记录；与不可删除的后台 Trace 审计历史分离。 */
+    @GetMapping("/chat-visible-history")
+    public ApiResponse<List<ChatEntry>> chatVisibleHistory(@RequestParam Long mediaId, HttpServletRequest http) {
+        requireOwnedMedia(mediaId, http);
+        return ApiResponse.ok(chatHistoryViewService.visible(mediaId));
+    }
+
+    /** 仅清空当前视频追问框，后台 media-chat Trace 不删除。 */
+    @PostMapping("/chat-visible-history/clear")
+    public ApiResponse<List<ChatEntry>> clearChatVisibleHistory(
+            @Valid @RequestBody ChatHistoryActionRequest request, HttpServletRequest http) {
+        requireOwnedMedia(request.mediaId(), http);
+        return ApiResponse.ok(chatHistoryViewService.clearVisible(request.mediaId()));
+    }
+
+    /** 仅撤销工作台最近一轮提问和回答，后台 media-chat Trace 不删除。 */
+    @PostMapping("/chat-visible-history/undo")
+    public ApiResponse<List<ChatEntry>> undoLastChatRound(
+            @Valid @RequestBody ChatHistoryActionRequest request, HttpServletRequest http) {
+        requireOwnedMedia(request.mediaId(), http);
+        return ApiResponse.ok(chatHistoryViewService.undoLastRound(request.mediaId()));
+    }
+
+    private void requireOwnedMedia(Long mediaId, HttpServletRequest http) {
+        Long userId = CurrentUser.userId(http);
+        mediaFileRepository.findByIdAndUserId(mediaId, userId)
+                .orElseThrow(() -> new BusinessException(404, "媒体不存在"));
     }
 
     /** 连续追问回答（附更新后的完整对话历史，前端直接渲染）。 */
-    public record ChatResponse(String answer, List<ChatEntry> history) {}
+    public record ChatResponse(String answer, List<ChatEvidence> evidence,
+                               boolean insufficientEvidence, List<ChatEntry> history, RetrievalAssessment retrieval) {
+        public ChatResponse(String answer, List<ChatEvidence> evidence, boolean insufficientEvidence, List<ChatEntry> history) {
+            this(answer, evidence, insufficientEvidence, history, null);
+        }
+    }
 
-    /**
-     * 知识库全局检索（跨项目）：遍历用户所有已完成视频，无 LLM 改写逐项目检索后按分数合并。
-     */
+    /** 知识库全局定位：一次用户级混合检索，不调用生成式 LLM。 */
+    @GetMapping("/global-search/details")
+    public ApiResponse<GlobalKnowledgeSearchService.SearchResponse> globalSearchDetails(@RequestParam String query,
+            @RequestParam(defaultValue = "10") int topK, HttpServletRequest http) {
+        return ApiResponse.ok(globalKnowledgeSearchService.searchDetailed(CurrentUser.userId(http), query, topK));
+    }
+
     @GetMapping("/global-search")
     public ApiResponse<List<GlobalEvidenceHit>> globalSearch(@RequestParam String query,
                                                              @RequestParam(defaultValue = "10") int topK,
                                                              HttpServletRequest http) {
         Long userId = CurrentUser.userId(http);
-        List<GlobalEvidenceHit> out = new ArrayList<>();
-        for (MediaFile media : mediaFileRepository.findByUserIdOrderByCreatedAtDesc(userId)) {
-            if (!MediaFile.STATUS_CONTEXT_READY.equals(media.getStatus())) {
-                continue;
-            }
-            VideoContext ctx = checkpointService.loadVideoContext(media.getId()).orElse(null);
-            if (ctx == null) {
-                continue;
-            }
-            try {
-                List<EvidenceHit> hits = retrievalService.searchNoRewrite(
-                        media.getId(), media.getContentHash(), ctx, query, 3, userId);
-                for (EvidenceHit h : hits) {
-                    out.add(new GlobalEvidenceHit(media.getId(), media.getFilename(),
-                            h.startMs(), h.endMs(), h.summary(), h.score(), h.source()));
-                }
-            } catch (Exception e) {
-                log.warn("global-search skip mediaId={}: {}", media.getId(), e.getMessage());
-            }
-        }
-        out.sort(Comparator.comparingDouble(GlobalEvidenceHit::score).reversed());
-        return ApiResponse.ok(out.stream().limit(Math.max(1, topK)).toList());
+        return ApiResponse.ok(globalKnowledgeSearchService.search(userId, query, topK));
     }
 }

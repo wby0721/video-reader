@@ -42,6 +42,9 @@ export const api = {
   // 连续追问：基于视频上下文 + 历史对话，返回自然语言回答（含更新后的完整历史）
   chat(mediaId, query, history) { return this.post('/analysis/chat', { mediaId, query, history }); },
   chatHistory(mediaId) { return this.get(`/analysis/chat-history?mediaId=${mediaId}`); },
+  visibleChatHistory(mediaId) { return this.get(`/analysis/chat-visible-history?mediaId=${mediaId}`); },
+  clearChatHistory(mediaId) { return this.post('/analysis/chat-visible-history/clear', { mediaId }); },
+  undoChatHistory(mediaId) { return this.post('/analysis/chat-visible-history/undo', { mediaId }); },
 
   /**
    * 分片上传：init → chunk（带进度回调）→ complete，返回 { id: mediaId, status, reused }。

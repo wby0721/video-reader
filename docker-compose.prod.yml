@@ -131,7 +131,31 @@ services:
       interval: 15s
       timeout: 10s
       retries: 12
-      start_period: 60s
+      start_period: 180s
+    restart: unless-stopped
+    networks: [vr-net]
+
+  reranker:
+    build:
+      context: ./inference
+      dockerfile: Dockerfile
+    container_name: vr-reranker
+    working_dir: /app/reranker
+    command: ["python", "app.py"]
+    environment:
+      RERANKER_PORT: "8003"
+      RERANKER_DEVICE: cpu
+      RERANKER_MODEL_PATH: /app/models/bge-reranker-v2-m3
+      BACKEND_URL: http://backend:8081/health
+    volumes:
+      - ./data/models:/app/models
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 180s
     restart: unless-stopped
     networks: [vr-net]
 
@@ -201,6 +225,10 @@ services:
       EMBEDDING_BASE_URL: http://embedding:8000
       ASR_BASE_URL: http://asr:8001
       OCR_BASE_URL: http://ocr:8002
+      RERANKER_BASE_URL: http://reranker:8003
+      RERANKER_READ_TIMEOUT_MS: ${RERANKER_READ_TIMEOUT_MS:-60000}
+      RAG_MIN_RERANKER_SCORE: ${RAG_MIN_RERANKER_SCORE:-0.5}
+      RAG_REJECT_LOW_RELEVANCE: ${RAG_REJECT_LOW_RELEVANCE:-false}
       # 服务器无本地 ASR 模型 → 默认引擎必须是讯飞（用户可在设置页改为 local 但服务器无法运行）
       ASR_ENGINE_DEFAULT: xfyun
       # 讯飞切片 15 分钟（整段一次上传成 1 个任务）：
@@ -231,6 +259,10 @@ services:
       minio:
         condition: service_healthy
       qdrant:
+        condition: service_healthy
+      embedding:
+        condition: service_healthy
+      reranker:
         condition: service_healthy
     healthcheck:
       # JRE 镜像无 curl，用 bash 内置 /dev/tcp 探测 /health（HTTP 200）

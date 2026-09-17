@@ -1,0 +1,2034 @@
+[
+  {
+    "timestampMs": 7000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/7000.jpg"
+  },
+  {
+    "timestampMs": 18000,
+    "texts": [
+      "课程讲义 01",
+      "这节四十分钟的课程从网络分层开始，目标不是背诵名词，而是建立一条可以排障的路径。应用",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/18000.jpg"
+  },
+  {
+    "timestampMs": 20000,
+    "texts": [
+      "网络排障：Layer by Layer"
+    ],
+    "frameRef": "frames/900040/20000.jpg"
+  },
+  {
+    "timestampMs": 31000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/31000.jpg"
+  },
+  {
+    "timestampMs": 44000,
+    "texts": [
+      "章节进度 1/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/44000.jpg"
+  },
+  {
+    "timestampMs": 53000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/53000.jpg"
+  },
+  {
+    "timestampMs": 67000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/67000.jpg"
+  },
+  {
+    "timestampMs": 78000,
+    "texts": [
+      "课程讲义 02",
+      "链路层负责同一网络范围内的帧传输，常见标识是 MAC 地址。交换机会学习源 MAC ",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/78000.jpg"
+  },
+  {
+    "timestampMs": 90000,
+    "texts": [
+      "Layer 2：MAC / Switch / VLAN"
+    ],
+    "frameRef": "frames/900040/90000.jpg"
+  },
+  {
+    "timestampMs": 91000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/91000.jpg"
+  },
+  {
+    "timestampMs": 104000,
+    "texts": [
+      "章节进度 2/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/104000.jpg"
+  },
+  {
+    "timestampMs": 113000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/113000.jpg"
+  },
+  {
+    "timestampMs": 127000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/127000.jpg"
+  },
+  {
+    "timestampMs": 138000,
+    "texts": [
+      "课程讲义 03",
+      "ARP 用来把同一局域网中的 IPv4 地址解析为 MAC 地址。主机先查看本地缓存",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/138000.jpg"
+  },
+  {
+    "timestampMs": 150000,
+    "texts": [
+      "ARP：IPv4 → MAC Address"
+    ],
+    "frameRef": "frames/900040/150000.jpg"
+  },
+  {
+    "timestampMs": 151000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/151000.jpg"
+  },
+  {
+    "timestampMs": 164000,
+    "texts": [
+      "章节进度 3/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/164000.jpg"
+  },
+  {
+    "timestampMs": 173000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/173000.jpg"
+  },
+  {
+    "timestampMs": 187000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/187000.jpg"
+  },
+  {
+    "timestampMs": 198000,
+    "texts": [
+      "课程讲义 04",
+      "进入网络层后，IP 负责跨网络寻址和路由。路由表通常采用最长前缀匹配，目标地址同时匹",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/198000.jpg"
+  },
+  {
+    "timestampMs": 211000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/211000.jpg"
+  },
+  {
+    "timestampMs": 215000,
+    "texts": [
+      "Routing：Longest Prefix Match"
+    ],
+    "frameRef": "frames/900040/215000.jpg"
+  },
+  {
+    "timestampMs": 224000,
+    "texts": [
+      "章节进度 4/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/224000.jpg"
+  },
+  {
+    "timestampMs": 233000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/233000.jpg"
+  },
+  {
+    "timestampMs": 247000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/247000.jpg"
+  },
+  {
+    "timestampMs": 258000,
+    "texts": [
+      "课程讲义 05",
+      "IPv4 地址由网络部分和主机部分组成，CIDR 使用斜杠后的数字表示网络前缀长度。",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/258000.jpg"
+  },
+  {
+    "timestampMs": 271000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/271000.jpg"
+  },
+  {
+    "timestampMs": 275000,
+    "texts": [
+      "CIDR /24 不是固定容量答案"
+    ],
+    "frameRef": "frames/900040/275000.jpg"
+  },
+  {
+    "timestampMs": 284000,
+    "texts": [
+      "章节进度 5/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/284000.jpg"
+  },
+  {
+    "timestampMs": 293000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/293000.jpg"
+  },
+  {
+    "timestampMs": 307000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/307000.jpg"
+  },
+  {
+    "timestampMs": 318000,
+    "texts": [
+      "课程讲义 06",
+      "NAT 会在边界设备上修改源地址或目标地址，使私有地址可以共享公网出口。它缓解了 I",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/318000.jpg"
+  },
+  {
+    "timestampMs": 331000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/331000.jpg"
+  },
+  {
+    "timestampMs": 335000,
+    "texts": [
+      "NAT Table：Before / After Tuple"
+    ],
+    "frameRef": "frames/900040/335000.jpg"
+  },
+  {
+    "timestampMs": 344000,
+    "texts": [
+      "章节进度 6/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/344000.jpg"
+  },
+  {
+    "timestampMs": 353000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/353000.jpg"
+  },
+  {
+    "timestampMs": 367000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/367000.jpg"
+  },
+  {
+    "timestampMs": 378000,
+    "texts": [
+      "课程讲义 07",
+      "ICMP 提供差错报告和诊断能力，ping 通常使用回显请求与应答。ping 不通不",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/378000.jpg"
+  },
+  {
+    "timestampMs": 391000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/391000.jpg"
+  },
+  {
+    "timestampMs": 395000,
+    "texts": [
+      "ping ≠ Service Health"
+    ],
+    "frameRef": "frames/900040/395000.jpg"
+  },
+  {
+    "timestampMs": 404000,
+    "texts": [
+      "章节进度 7/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/404000.jpg"
+  },
+  {
+    "timestampMs": 413000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/413000.jpg"
+  },
+  {
+    "timestampMs": 427000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/427000.jpg"
+  },
+  {
+    "timestampMs": 438000,
+    "texts": [
+      "课程讲义 08",
+      "传输层中，UDP 不建立连接，头部简单，应用需要自行处理丢失、乱序或重传。它适合实时",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/438000.jpg"
+  },
+  {
+    "timestampMs": 451000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/451000.jpg"
+  },
+  {
+    "timestampMs": 455000,
+    "texts": [
+      "UDP vs TCP"
+    ],
+    "frameRef": "frames/900040/455000.jpg"
+  },
+  {
+    "timestampMs": 464000,
+    "texts": [
+      "章节进度 8/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/464000.jpg"
+  },
+  {
+    "timestampMs": 473000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/473000.jpg"
+  },
+  {
+    "timestampMs": 487000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/487000.jpg"
+  },
+  {
+    "timestampMs": 498000,
+    "texts": [
+      "课程讲义 09",
+      "TCP 建立连接使用三次握手。客户端首先发送带 SYN 标志的报文并给出初始序号，服",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/498000.jpg"
+  },
+  {
+    "timestampMs": 505000,
+    "texts": [
+      "SYN → SYN-ACK → ACK"
+    ],
+    "frameRef": "frames/900040/505000.jpg"
+  },
+  {
+    "timestampMs": 511000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/511000.jpg"
+  },
+  {
+    "timestampMs": 524000,
+    "texts": [
+      "章节进度 9/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/524000.jpg"
+  },
+  {
+    "timestampMs": 533000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/533000.jpg"
+  },
+  {
+    "timestampMs": 547000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/547000.jpg"
+  },
+  {
+    "timestampMs": 558000,
+    "texts": [
+      "课程讲义 10",
+      "为什么不是两次握手？如果只进行两步，服务器无法确认客户端是否收到了服务器的初始序号和",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/558000.jpg"
+  },
+  {
+    "timestampMs": 565000,
+    "texts": [
+      "为什么不是两次握手？"
+    ],
+    "frameRef": "frames/900040/565000.jpg"
+  },
+  {
+    "timestampMs": 571000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/571000.jpg"
+  },
+  {
+    "timestampMs": 584000,
+    "texts": [
+      "章节进度 10/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/584000.jpg"
+  },
+  {
+    "timestampMs": 593000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/593000.jpg"
+  },
+  {
+    "timestampMs": 607000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/607000.jpg"
+  },
+  {
+    "timestampMs": 618000,
+    "texts": [
+      "课程讲义 11",
+      "抓包时可以看到客户端的 SYN、服务器的 SYN ACK 和客户端 ACK。若不断出",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/618000.jpg"
+  },
+  {
+    "timestampMs": 625000,
+    "texts": [
+      "Timeout / RST / SYN Retransmission"
+    ],
+    "frameRef": "frames/900040/625000.jpg"
+  },
+  {
+    "timestampMs": 631000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/631000.jpg"
+  },
+  {
+    "timestampMs": 644000,
+    "texts": [
+      "章节进度 11/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/644000.jpg"
+  },
+  {
+    "timestampMs": 653000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/653000.jpg"
+  },
+  {
+    "timestampMs": 667000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/667000.jpg"
+  },
+  {
+    "timestampMs": 678000,
+    "texts": [
+      "课程讲义 12",
+      "TCP 关闭通常被描述为四次挥手，因为两个方向的字节流可以独立关闭。一方发送 FIN",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/678000.jpg"
+  },
+  {
+    "timestampMs": 691000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/691000.jpg"
+  },
+  {
+    "timestampMs": 695000,
+    "texts": [
+      "FIN → ACK → FIN → ACK"
+    ],
+    "frameRef": "frames/900040/695000.jpg"
+  },
+  {
+    "timestampMs": 704000,
+    "texts": [
+      "章节进度 12/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/704000.jpg"
+  },
+  {
+    "timestampMs": 713000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/713000.jpg"
+  },
+  {
+    "timestampMs": 727000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/727000.jpg"
+  },
+  {
+    "timestampMs": 738000,
+    "texts": [
+      "课程讲义 13",
+      "主动关闭方进入 TIME WAIT，主要作用是让最后的 ACK 有机会重传，并避免旧",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/738000.jpg"
+  },
+  {
+    "timestampMs": 751000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/751000.jpg"
+  },
+  {
+    "timestampMs": 755000,
+    "texts": [
+      "TIME_WAIT：2MSL"
+    ],
+    "frameRef": "frames/900040/755000.jpg"
+  },
+  {
+    "timestampMs": 764000,
+    "texts": [
+      "章节进度 13/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/764000.jpg"
+  },
+  {
+    "timestampMs": 773000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/773000.jpg"
+  },
+  {
+    "timestampMs": 787000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/787000.jpg"
+  },
+  {
+    "timestampMs": 798000,
+    "texts": [
+      "课程讲义 14",
+      "TCP 可靠性依赖序号和确认号。接收方确认已经连续收到的字节，发送方在超时或快速重传",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/798000.jpg"
+  },
+  {
+    "timestampMs": 811000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/811000.jpg"
+  },
+  {
+    "timestampMs": 824000,
+    "texts": [
+      "章节进度 14/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/824000.jpg"
+  },
+  {
+    "timestampMs": 833000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/833000.jpg"
+  },
+  {
+    "timestampMs": 847000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/847000.jpg"
+  },
+  {
+    "timestampMs": 858000,
+    "texts": [
+      "课程讲义 15",
+      "流量控制保护接收方，接收窗口表示还能接收多少数据；拥塞控制保护网络，拥塞窗口根据网络",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/858000.jpg"
+  },
+  {
+    "timestampMs": 871000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/871000.jpg"
+  },
+  {
+    "timestampMs": 875000,
+    "texts": [
+      "Receive Window / Congestion Window"
+    ],
+    "frameRef": "frames/900040/875000.jpg"
+  },
+  {
+    "timestampMs": 884000,
+    "texts": [
+      "章节进度 15/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/884000.jpg"
+  },
+  {
+    "timestampMs": 893000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/893000.jpg"
+  },
+  {
+    "timestampMs": 907000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/907000.jpg"
+  },
+  {
+    "timestampMs": 918000,
+    "texts": [
+      "课程讲义 16",
+      "DNS 把域名解析为地址。客户端可能依次查询浏览器缓存、操作系统缓存、本地解析器和权",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/918000.jpg"
+  },
+  {
+    "timestampMs": 931000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/931000.jpg"
+  },
+  {
+    "timestampMs": 935000,
+    "texts": [
+      "DNS Resolution Path"
+    ],
+    "frameRef": "frames/900040/935000.jpg"
+  },
+  {
+    "timestampMs": 944000,
+    "texts": [
+      "章节进度 16/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/944000.jpg"
+  },
+  {
+    "timestampMs": 953000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/953000.jpg"
+  },
+  {
+    "timestampMs": 967000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/967000.jpg"
+  },
+  {
+    "timestampMs": 978000,
+    "texts": [
+      "课程讲义 17",
+      "A 记录返回 IPv4 地址，AAAA 返回 IPv6 地址，CNAME 表示别名，",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/978000.jpg"
+  },
+  {
+    "timestampMs": 991000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/991000.jpg"
+  },
+  {
+    "timestampMs": 995000,
+    "texts": [
+      "A / AAAA / CNAME / MX"
+    ],
+    "frameRef": "frames/900040/995000.jpg"
+  },
+  {
+    "timestampMs": 1004000,
+    "texts": [
+      "章节进度 17/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1004000.jpg"
+  },
+  {
+    "timestampMs": 1013000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/1013000.jpg"
+  },
+  {
+    "timestampMs": 1027000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/1027000.jpg"
+  },
+  {
+    "timestampMs": 1038000,
+    "texts": [
+      "课程讲义 18",
+      "DNS 得到目标地址后，浏览器通常建立 TCP 连接；HTTPS 还需要 TLS 握",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1038000.jpg"
+  },
+  {
+    "timestampMs": 1051000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/1051000.jpg"
+  },
+  {
+    "timestampMs": 1055000,
+    "texts": [
+      "TLS ClientHello / Certificate / Session Key"
+    ],
+    "frameRef": "frames/900040/1055000.jpg"
+  },
+  {
+    "timestampMs": 1064000,
+    "texts": [
+      "章节进度 18/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1064000.jpg"
+  },
+  {
+    "timestampMs": 1073000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/1073000.jpg"
+  },
+  {
+    "timestampMs": 1087000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/1087000.jpg"
+  },
+  {
+    "timestampMs": 1098000,
+    "texts": [
+      "课程讲义 19",
+      "证书验证失败常见原因包括系统时间错误、证书过期、域名不匹配、中间证书缺失或企业代理替",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1098000.jpg"
+  },
+  {
+    "timestampMs": 1111000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/1111000.jpg"
+  },
+  {
+    "timestampMs": 1115000,
+    "texts": [
+      "Never Disable Certificate Verification"
+    ],
+    "frameRef": "frames/900040/1115000.jpg"
+  },
+  {
+    "timestampMs": 1124000,
+    "texts": [
+      "章节进度 19/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1124000.jpg"
+  },
+  {
+    "timestampMs": 1133000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/1133000.jpg"
+  },
+  {
+    "timestampMs": 1147000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/1147000.jpg"
+  },
+  {
+    "timestampMs": 1158000,
+    "texts": [
+      "课程讲义 20",
+      "HTTP 请求由方法、路径、头部和可选消息体组成。GET 通常用于读取，POST 常",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1158000.jpg"
+  },
+  {
+    "timestampMs": 1171000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/1171000.jpg"
+  },
+  {
+    "timestampMs": 1184000,
+    "texts": [
+      "章节进度 20/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1184000.jpg"
+  },
+  {
+    "timestampMs": 1193000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/1193000.jpg"
+  },
+  {
+    "timestampMs": 1207000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/1207000.jpg"
+  },
+  {
+    "timestampMs": 1218000,
+    "texts": [
+      "课程讲义 21",
+      "状态码按类别表达结果。二百段表示请求被成功处理，三百段与重定向或缓存有关，四百段表示",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1218000.jpg"
+  },
+  {
+    "timestampMs": 1231000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/1231000.jpg"
+  },
+  {
+    "timestampMs": 1235000,
+    "texts": [
+      "HTTP Status：2xx 3xx 4xx 5xx"
+    ],
+    "frameRef": "frames/900040/1235000.jpg"
+  },
+  {
+    "timestampMs": 1244000,
+    "texts": [
+      "章节进度 21/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1244000.jpg"
+  },
+  {
+    "timestampMs": 1253000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/1253000.jpg"
+  },
+  {
+    "timestampMs": 1267000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/1267000.jpg"
+  },
+  {
+    "timestampMs": 1278000,
+    "texts": [
+      "课程讲义 22",
+      "HTTP 缓存可以使用 Cache Control、ETag 和 Last Modi",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1278000.jpg"
+  },
+  {
+    "timestampMs": 1291000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/1291000.jpg"
+  },
+  {
+    "timestampMs": 1304000,
+    "texts": [
+      "章节进度 22/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1304000.jpg"
+  },
+  {
+    "timestampMs": 1313000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/1313000.jpg"
+  },
+  {
+    "timestampMs": 1327000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/1327000.jpg"
+  },
+  {
+    "timestampMs": 1338000,
+    "texts": [
+      "课程讲义 23",
+      "HTTP 一点一默认可以复用持久连接，减少重复 TCP 和 TLS 握手。流水线受队",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1338000.jpg"
+  },
+  {
+    "timestampMs": 1351000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/1351000.jpg"
+  },
+  {
+    "timestampMs": 1355000,
+    "texts": [
+      "HTTP/2 Multiplexing"
+    ],
+    "frameRef": "frames/900040/1355000.jpg"
+  },
+  {
+    "timestampMs": 1364000,
+    "texts": [
+      "章节进度 23/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1364000.jpg"
+  },
+  {
+    "timestampMs": 1373000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/1373000.jpg"
+  },
+  {
+    "timestampMs": 1387000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/1387000.jpg"
+  },
+  {
+    "timestampMs": 1398000,
+    "texts": [
+      "课程讲义 24",
+      "HTTP 三建立在 QUIC 之上，通常使用 UDP，并把可靠传输、拥塞控制和加密集",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1398000.jpg"
+  },
+  {
+    "timestampMs": 1411000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/1411000.jpg"
+  },
+  {
+    "timestampMs": 1415000,
+    "texts": [
+      "HTTP/3 over QUIC"
+    ],
+    "frameRef": "frames/900040/1415000.jpg"
+  },
+  {
+    "timestampMs": 1424000,
+    "texts": [
+      "章节进度 24/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1424000.jpg"
+  },
+  {
+    "timestampMs": 1433000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/1433000.jpg"
+  },
+  {
+    "timestampMs": 1447000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/1447000.jpg"
+  },
+  {
+    "timestampMs": 1458000,
+    "texts": [
+      "课程讲义 25",
+      "反向代理位于客户端和应用服务器之间，可以终止 TLS、路由请求、压缩响应、执行限流并",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1458000.jpg"
+  },
+  {
+    "timestampMs": 1471000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/1471000.jpg"
+  },
+  {
+    "timestampMs": 1475000,
+    "texts": [
+      "502 Bad Gateway / 504 Gateway Timeout"
+    ],
+    "frameRef": "frames/900040/1475000.jpg"
+  },
+  {
+    "timestampMs": 1484000,
+    "texts": [
+      "章节进度 25/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1484000.jpg"
+  },
+  {
+    "timestampMs": 1493000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/1493000.jpg"
+  },
+  {
+    "timestampMs": 1507000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/1507000.jpg"
+  },
+  {
+    "timestampMs": 1518000,
+    "texts": [
+      "课程讲义 26",
+      "负载均衡可以按轮询、最少连接、一致性哈希等策略选择后端。健康检查失败的节点应暂时摘除",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1518000.jpg"
+  },
+  {
+    "timestampMs": 1531000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/1531000.jpg"
+  },
+  {
+    "timestampMs": 1535000,
+    "texts": [
+      "Load Balancer Health Check"
+    ],
+    "frameRef": "frames/900040/1535000.jpg"
+  },
+  {
+    "timestampMs": 1544000,
+    "texts": [
+      "章节进度 26/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1544000.jpg"
+  },
+  {
+    "timestampMs": 1553000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/1553000.jpg"
+  },
+  {
+    "timestampMs": 1567000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/1567000.jpg"
+  },
+  {
+    "timestampMs": 1578000,
+    "texts": [
+      "课程讲义 27",
+      "超时需要分层设置。客户端总超时、代理读取超时、服务调用超时和数据库超时应形成递减预算",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1578000.jpg"
+  },
+  {
+    "timestampMs": 1591000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/1591000.jpg"
+  },
+  {
+    "timestampMs": 1604000,
+    "texts": [
+      "章节进度 27/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1604000.jpg"
+  },
+  {
+    "timestampMs": 1613000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/1613000.jpg"
+  },
+  {
+    "timestampMs": 1627000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/1627000.jpg"
+  },
+  {
+    "timestampMs": 1638000,
+    "texts": [
+      "课程讲义 28",
+      "重试能缓解瞬时故障，却会放大持续故障。多个客户端立即同步重试时会形成重试风暴，因此应",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1638000.jpg"
+  },
+  {
+    "timestampMs": 1651000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/1651000.jpg"
+  },
+  {
+    "timestampMs": 1655000,
+    "texts": [
+      "Exponential Backoff + Jitter"
+    ],
+    "frameRef": "frames/900040/1655000.jpg"
+  },
+  {
+    "timestampMs": 1664000,
+    "texts": [
+      "章节进度 28/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1664000.jpg"
+  },
+  {
+    "timestampMs": 1673000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/1673000.jpg"
+  },
+  {
+    "timestampMs": 1687000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/1687000.jpg"
+  },
+  {
+    "timestampMs": 1698000,
+    "texts": [
+      "课程讲义 29",
+      "限流用于保护有限资源，常见算法包括固定窗口、滑动窗口、漏桶和令牌桶。令牌桶允许一定突",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1698000.jpg"
+  },
+  {
+    "timestampMs": 1711000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/1711000.jpg"
+  },
+  {
+    "timestampMs": 1715000,
+    "texts": [
+      "429 Too Many Requests"
+    ],
+    "frameRef": "frames/900040/1715000.jpg"
+  },
+  {
+    "timestampMs": 1724000,
+    "texts": [
+      "章节进度 29/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1724000.jpg"
+  },
+  {
+    "timestampMs": 1733000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/1733000.jpg"
+  },
+  {
+    "timestampMs": 1747000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/1747000.jpg"
+  },
+  {
+    "timestampMs": 1758000,
+    "texts": [
+      "课程讲义 30",
+      "熔断器在下游持续失败时暂时阻止新调用，快速返回降级结果，让故障组件有恢复时间。半开状",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1758000.jpg"
+  },
+  {
+    "timestampMs": 1771000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/1771000.jpg"
+  },
+  {
+    "timestampMs": 1784000,
+    "texts": [
+      "章节进度 30/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1784000.jpg"
+  },
+  {
+    "timestampMs": 1793000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/1793000.jpg"
+  },
+  {
+    "timestampMs": 1807000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/1807000.jpg"
+  },
+  {
+    "timestampMs": 1818000,
+    "texts": [
+      "课程讲义 31",
+      "可观测性包含指标、日志和链路追踪。指标适合发现趋势和告警，日志保存离散事件细节，追踪",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/1818000.jpg"
+  },
+  {
+    "timestampMs": 1831000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/1831000.jpg"
+  },
+  {
+    "timestampMs": 1835000,
+    "texts": [
+      "Metrics + Logs + Traces"
+    ],
+    "frameRef": "frames/900040/1835000.jpg"
+  },
+  {
+    "timestampMs": 1844000,
+    "texts": [
+      "章节进度 31/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1844000.jpg"
+  },
+  {
+    "timestampMs": 1853000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/1853000.jpg"
+  },
+  {
+    "timestampMs": 1867000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/1867000.jpg"
+  },
+  {
+    "timestampMs": 1878000,
+    "texts": [
+      "课程讲义 32",
+      "延迟分析不要只看平均值。P50 表示典型体验，P95 和 P99 展示尾部请求；少量",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/1878000.jpg"
+  },
+  {
+    "timestampMs": 1891000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/1891000.jpg"
+  },
+  {
+    "timestampMs": 1904000,
+    "texts": [
+      "章节进度 32/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1904000.jpg"
+  },
+  {
+    "timestampMs": 1913000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/1913000.jpg"
+  },
+  {
+    "timestampMs": 1927000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/1927000.jpg"
+  },
+  {
+    "timestampMs": 1938000,
+    "texts": [
+      "课程讲义 33",
+      "抓包时首先固定时间、客户端地址、服务端地址、端口和协议，然后使用过滤条件缩小范围。分",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/1938000.jpg"
+  },
+  {
+    "timestampMs": 1951000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/1951000.jpg"
+  },
+  {
+    "timestampMs": 1955000,
+    "texts": [
+      "Filter：ip.addr / tcp.port / http"
+    ],
+    "frameRef": "frames/900040/1955000.jpg"
+  },
+  {
+    "timestampMs": 1964000,
+    "texts": [
+      "章节进度 33/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/1964000.jpg"
+  },
+  {
+    "timestampMs": 1973000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/1973000.jpg"
+  },
+  {
+    "timestampMs": 1987000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/1987000.jpg"
+  },
+  {
+    "timestampMs": 1998000,
+    "texts": [
+      "课程讲义 34",
+      "来看第一个案例：用户报告域名偶尔超时。监控显示应用服务器正常，但客户端 DNS 查询",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/1998000.jpg"
+  },
+  {
+    "timestampMs": 2011000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/2011000.jpg"
+  },
+  {
+    "timestampMs": 2024000,
+    "texts": [
+      "章节进度 34/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/2024000.jpg"
+  },
+  {
+    "timestampMs": 2033000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/2033000.jpg"
+  },
+  {
+    "timestampMs": 2047000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/2047000.jpg"
+  },
+  {
+    "timestampMs": 2058000,
+    "texts": [
+      "课程讲义 35",
+      "第二个案例是接口返回五百零二。代理日志显示连接上游被拒绝，应用主机可以 ping 通",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/2058000.jpg"
+  },
+  {
+    "timestampMs": 2071000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/2071000.jpg"
+  },
+  {
+    "timestampMs": 2084000,
+    "texts": [
+      "章节进度 35/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/2084000.jpg"
+  },
+  {
+    "timestampMs": 2093000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/2093000.jpg"
+  },
+  {
+    "timestampMs": 2107000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/2107000.jpg"
+  },
+  {
+    "timestampMs": 2118000,
+    "texts": [
+      "课程讲义 36",
+      "第三个案例是晚高峰 P99 延迟升高。平均 CPU 只有一半，但连接池等待时间明显增",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/2118000.jpg"
+  },
+  {
+    "timestampMs": 2131000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/2131000.jpg"
+  },
+  {
+    "timestampMs": 2144000,
+    "texts": [
+      "章节进度 36/40",
+      "Video Reader Training 2026",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/2144000.jpg"
+  },
+  {
+    "timestampMs": 2153000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/2153000.jpg"
+  },
+  {
+    "timestampMs": 2167000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/2167000.jpg"
+  },
+  {
+    "timestampMs": 2178000,
+    "texts": [
+      "课程讲义 37",
+      "第四个案例是 HTTPS 只在旧终端失败。服务端更换证书时没有发送中间证书，新终端能",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/2178000.jpg"
+  },
+  {
+    "timestampMs": 2191000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/2191000.jpg"
+  },
+  {
+    "timestampMs": 2204000,
+    "texts": [
+      "章节进度 37/40",
+      "Video Reader Training 2026",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/2204000.jpg"
+  },
+  {
+    "timestampMs": 2213000,
+    "texts": [
+      "Windows 安全中心",
+      "病毒和威胁防护：无需执行操作",
+      "20:17"
+    ],
+    "frameRef": "frames/900040/2213000.jpg"
+  },
+  {
+    "timestampMs": 2227000,
+    "texts": [
+      "群聊（12）",
+      "小王：会议室改到 B302",
+      "小李：收到"
+    ],
+    "frameRef": "frames/900040/2227000.jpg"
+  },
+  {
+    "timestampMs": 2238000,
+    "texts": [
+      "课程讲义 38",
+      "形成排障清单时，第一步确认影响范围和开始时间，第二步按 DNS、路由、连接、TLS、",
+      "网络排障实验室"
+    ],
+    "frameRef": "frames/900040/2238000.jpg"
+  },
+  {
+    "timestampMs": 2251000,
+    "texts": [
+      "Video Player",
+      "1.25x",
+      "自动播放：开启",
+      "音量 72%"
+    ],
+    "frameRef": "frames/900040/2251000.jpg"
+  },
+  {
+    "timestampMs": 2264000,
+    "texts": [
+      "章节进度 38/40",
+      "Video Reader Training 2026",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/2264000.jpg"
+  },
+  {
+    "timestampMs": 2273000,
+    "texts": [
+      "Weather",
+      "阵雨 23°C",
+      "空气质量 良"
+    ],
+    "frameRef": "frames/900040/2273000.jpg"
+  },
+  {
+    "timestampMs": 2287000,
+    "texts": [
+      "Browser Tabs",
+      "购物车 (3)",
+      "午餐订单",
+      "未读消息 8"
+    ],
+    "frameRef": "frames/900040/2287000.jpg"
+  },
+  {
+    "timestampMs": 2298000,
+    "texts": [
+      "课程讲义 39",
+      "对于 RAG 或搜索系统，这套网络方法同样适用。查询失败时要区分 Embedding",
+      "课件页脚 · INTERNAL"
+    ],
+    "frameRef": "frames/900040/2298000.jpg"
+  },
+  {
+    "timestampMs": 2311000,
+    "texts": [
+      "Battery 36%",
+      "正在充电",
+      "Wi-Fi: Office-Guest"
+    ],
+    "frameRef": "frames/900040/2311000.jpg"
+  },
+  {
+    "timestampMs": 2315000,
+    "texts": [
+      "NET-TRACE-Z9"
+    ],
+    "frameRef": "frames/900040/2315000.jpg"
+  },
+  {
+    "timestampMs": 2324000,
+    "texts": [
+      "章节进度 39/40",
+      "Video Reader Training 2026",
+      "HTIP / TCPIP 原始识别"
+    ],
+    "frameRef": "frames/900040/2324000.jpg"
+  },
+  {
+    "timestampMs": 2333000,
+    "texts": [
+      "Calendar Reminder",
+      "周报同步会 21:00",
+      "稍后提醒"
+    ],
+    "frameRef": "frames/900040/2333000.jpg"
+  },
+  {
+    "timestampMs": 2347000,
+    "texts": [
+      "LIVE",
+      "在线人数 128",
+      "主播网络良好"
+    ],
+    "frameRef": "frames/900040/2347000.jpg"
+  },
+  {
+    "timestampMs": 2358000,
+    "texts": [
+      "课程讲义 40",
+      "最后总结完整链路：本地链路通过 MAC 和交换转发，IP 与路由负责跨网段，TCP ",
+      "请结合抓包证据"
+    ],
+    "frameRef": "frames/900040/2358000.jpg"
+  },
+  {
+    "timestampMs": 2371000,
+    "texts": [
+      "系统通知",
+      "可用更新 KB-20260911",
+      "立即重启 / 今晚提醒"
+    ],
+    "frameRef": "frames/900040/2371000.jpg"
+  },
+  {
+    "timestampMs": 2384000,
+    "texts": [
+      "章节进度 40/40",
+      "Video Reader Training 2026",
+      "自动字幕：踢西皮"
+    ],
+    "frameRef": "frames/900040/2384000.jpg"
+  },
+  {
+    "timestampMs": 2393000,
+    "texts": [
+      "Meeting Chat",
+      "能听见吗？",
+      "画面有一点卡",
+      "主持人：可以"
+    ],
+    "frameRef": "frames/900040/2393000.jpg"
+  }
+]

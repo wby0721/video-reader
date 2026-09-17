@@ -27,23 +27,14 @@ video_reader/
 │   └── src/main/resources/
 │       ├── application.yml
 │       └── db/migration/ # Flyway 迁移脚本
-├── client/               # Vue 3 工作台（占位，阶段六实现）
-├── inference/            # 本地推理服务 faster-whisper / PaddleOCR（占位，阶段二实现）
-├── eval/                 # 离线评估黄金任务集（占位，阶段六实现）
+├── client/               # Vue 3 工作台
+├── inference/            # ASR / OCR / BGE-M3 / BGE Reranker 推理服务
+├── eval/                 # Agent 与 RAG 离线评估黄金任务集
 ├── docker-compose.yml    # 中间件编排（Kafka/MySQL/MinIO/Qdrant/Redis）
 └── docs/                 # 架构设计文档
 ```
 
-## 当前进度：阶段一 ✅
-
-- Spring Boot 3 工程骨架，五关注点分包 + Flyway 迁移（users / media_files / agent_checkpoint / failed_analysis_task）
-- JWT 多用户鉴权：注册 / 登录 / BCrypt / AuthInterceptor / userId 数据隔离
-- 中间件接入：Kafka（topic + AdminClient）/ Redisson（限流）/ MinIO（桶）/ Qdrant / MySQL
-- `GET /health` 免鉴权健康检查（逐组件探测，优雅降级）
-- docker-compose.yml 一键起中间件
-- 单元测试：JwtService / AuthService 全部通过
-
-## 当前进度：阶段一 ✅ 阶段二 ✅ 阶段三 ✅ 阶段四 ✅ 阶段五 ✅ 阶段六 ✅
+## 当前进度：核心功能与个人知识库 RAG 改造已完成
 
 **阶段二（视频预处理 + 本地推理服务）**：
 - MinIO 分片上传 + 断点续传 + 内容级去重；FFmpeg 切片/关键帧/phash 去重
@@ -51,11 +42,16 @@ video_reader/
 - ASR/OCR 双分支并行容错 → 带时间戳 VideoContext；Kafka 异步 + 死信收敛 + 分支级 Checkpoint
 
 **阶段三（长视频检索）**：
-- 5 分钟知识块 + LLM 摘要 + BGE-M3 → Qdrant（contentHash 派生点 ID：内容级共享 + 幂等）
-- 混合检索（语义×0.6+关键词×0.25+画面×0.15）+ 意图改写；Qdrant 关闭降级本地余弦（DoD 验证通过）
+- 90 秒 Chunk + 15 秒重叠，保留时间戳、原始 ASR 片段、OCR、摘要和关键词；Chunk 暂不新增独立数据表
+- BGE-M3 Dense Top25 + Lucene BM25 Top25 + OCR Top10，按 `chunkId` 使用加权 RRF 融合 Top10
+- `bge-reranker-v2-m3` Cross-Encoder 精排 Top5；失败时回退 RRF Top5
+- 所有检索强制按 userId/contentHash 范围过滤；Embedding、Qdrant、BM25、Reranker 均有独立降级路径
+- 全局知识库一次 USER_ALL 查询，返回 Top10 且每视频最多 3 条；连续追问回读最多 5 个原始 Chunk 后直接调用回答模型
+- 完整方案、实现状态和验收记录见 `README_2.md`
 
 **阶段四（Agent 核心循环 ⭐）**：
-- Planner → Executor → Critic（≤2 轮）+ 反馈驱动定向补检索；执行预算 + 超限保留警告
+- Planner → Executor → Critic（最多 3 轮）+ 反馈驱动增量检索；执行预算 + 超限保留警告
+- 单次 Agent 运行共享 RetrievalSession/EvidencePool；REUSE 不检索、ADD_TIMESTAMP 直读 Chunk、SEARCH 只检索新问题
 - 四模式路由（GENERAL/LEARNING/REVIEW/CREATION）+ ModeProfile 扩展点
 - 自研 DeepSeek 客户端（thinking 关闭，completion token 降 ~85%）；目标级 Checkpoint 断点恢复
 
@@ -115,7 +111,13 @@ scripts\start-all.cmd -SkipFrontend
 
 **密钥配置**：本仓库**不含任何真实密钥**。请复制项目根目录 `.env.example` 为 `.env` 填入自己的密钥（`.env` 已被 gitignore 忽略）；`start-all.ps1` 会自动加载 `.env`，同名环境变量优先。LLM Key 也可由每个用户在**前端「个人设置」页提交自己的 Key**（AES-GCM 加密落库，仅显示脱敏值）。
 
-脚本按顺序启动 MySQL(3307) → Redis(6379) → Kafka(9092) → MinIO(9000) → Qdrant(6333) → embedding(8000)/asr(8001)/ocr(8002) → 后端(8081) → Vite(5173)，每个服务等待就绪后才继续；**按 Ctrl+C 自动停止本次启动的全部服务**（按端口兜底清理，如 mysqld 换 PID 存活的情况）。日志目录见 `scripts/start-all.ps1` 顶部（默认项目同级 `.tools/logs/`）。
+脚本按顺序启动 MySQL(3307) → Redis(6379) → Kafka(9092) → MinIO(9000) → Qdrant(6333) → embedding(8000)/asr(8001)/ocr(8002)/reranker(8003) → 后端(8081) → Vite(5173)，每个服务等待就绪后才继续；Redis 会校验 `PING=PONG`，不能只靠端口判断。服务进程提前退出时会立即显示对应 `.log` 和 `.err.log` 末尾，不再一直等到后端超时。**按 Ctrl+C 自动停止本次启动的全部服务**（按端口兜底清理，如 mysqld 换 PID 存活的情况）。日志目录见 `scripts/start-all.ps1` 顶部（默认项目同级 `.tools/logs/`）。
+
+视频追问窗口支持“撤销上一轮”和“清空”，均需二次确认。这两个操作只改变当前视频
+工作台的可见对话和后续连续追问上下文，后台可信度 Trace 的完整问答审计记录不会删除。
+
+可信度 Trace 的问答记录可展开查看同一次真实检索的三路粗召回、RRF、Reranker 分数、
+参数与完整 EvidencePack；旧记录保持兼容，但不会伪造当时未保存的检索链路。
 
 ### 0.1 一键停止
 
@@ -170,6 +172,7 @@ curl -X POST http://localhost:8081/user/register -H "Content-Type: application/j
 | Embedding | BGE-M3（OpenAI 兼容 /embeddings，1024 维） | `EMBEDDING_BASE_URL`（本地服务，无鉴权） |
 | ASR | 本地 Qwen3-ASR-0.6B 推理服务 | `ASR_BASE_URL` / `ASR_MODEL_PATH` |
 | OCR | 本地 RapidOCR（PP-OCRv4）推理服务 | `OCR_BASE_URL` |
+| Reranker | BGE reranker v2 m3 Cross-Encoder | `RERANKER_BASE_URL` / `RERANKER_MODEL_PATH` / `RERANKER_DEVICE` |
 
 ### 密钥安全与按用户接入（阶段三.5 / 七）
 

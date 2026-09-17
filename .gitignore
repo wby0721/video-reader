@@ -19,6 +19,8 @@ client/.vite/
 
 # --- 本地中间件数据（用户态演示） ---
 .tools/
+data/lucene-index/
+scripts/data/lucene-index/
 *.log
 
 # --- 环境变量与密钥 ---

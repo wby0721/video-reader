@@ -2,7 +2,7 @@
 =============================================================================
   Video Agent 一键停止脚本
   停止全部后台服务：后端(8081) / MySQL(3307) / Redis(6379) / Kafka(9092) /
-  MinIO(9000,9001) / Qdrant(6333) / 推理(embedding 8000, asr 8001, ocr 8002)
+  MinIO(9000,9001) / Qdrant(6333) / 推理(embedding 8000, asr 8001, ocr 8002, reranker 8003)
   用法：
     powershell -ExecutionPolicy Bypass -File scripts\stop-all.ps1
   说明：
@@ -17,7 +17,7 @@ $Tools = 'E:\agent_projct\.tools'
 
 # 端口 → 显示名
 $portNames = @{
-    8081 = '后端 (8081)'; 8000 = 'embedding (8000)'; 8001 = 'asr (8001)'; 8002 = 'ocr (8002)'
+    8081 = '后端 (8081)'; 8000 = 'embedding (8000)'; 8001 = 'asr (8001)'; 8002 = 'ocr (8002)'; 8003 = 'reranker (8003)'
     3307 = 'MySQL (3307)'; 6379 = 'Redis (6379)'; 9092 = 'Kafka (9092)'
     9000 = 'MinIO (9000)'; 9001 = 'MinIO 控制台 (9001)'; 6333 = 'Qdrant (6333)'; 5173 = '前端 Vite (5173)'
 }

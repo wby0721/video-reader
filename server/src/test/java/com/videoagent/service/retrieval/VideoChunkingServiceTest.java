@@ -11,38 +11,48 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class VideoChunkingServiceTest {
 
+    private static final long USER_ID = 7L;
+    private static final String HASH = "content-hash";
+    private static final int VERSION = RetrievalIndexService.INDEX_VERSION;
+
     private static VideoSegment seg(long start, long end, String text, List<String> ocr) {
         return VideoSegment.of(start, end, text, ocr, List.of());
     }
 
+    private static List<VideoChunk> chunk(VideoContext context) {
+        return VideoChunkingService.chunk(context, USER_ID, HASH, VERSION);
+    }
+
     @Test
-    void chunk_groupSegmentsInto5MinWindows() {
+    void chunk_uses90SecondWindowsWith15SecondOverlap() {
         VideoContext context = VideoContext.of("1", "goal", List.of(
-                seg(0, 60_000, "第一段语音", List.of("画面A")),
-                seg(120_000, 180_000, "第一段语音续", List.of()),
-                seg(310_000, 350_000, "第二窗口语音", List.of("画面B"))
+                seg(0, 60_000, "第一段", List.of("画面A")),
+                seg(80_000, 100_000, "跨重叠区域", List.of("画面B")),
+                seg(150_000, 170_000, "第三段", List.of())
         ));
 
-        List<VideoChunk> chunks = VideoChunkingService.chunk(context);
+        List<VideoChunk> chunks = chunk(context);
 
-        assertThat(chunks).hasSize(2);
-        VideoChunk first = chunks.get(0);
-        assertThat(first.startTime()).isEqualTo(0);
-        assertThat(first.endTime()).isEqualTo(180_000);
-        assertThat(first.transcript()).contains("第一段语音", "第一段语音续");
-        assertThat(first.visualTexts()).contains("画面A");
-        assertThat(first.rawSegments()).hasSize(2);
+        assertThat(chunks).hasSize(3);
+        assertThat(chunks).extracting(VideoChunk::startTime)
+                .containsExactly(0L, 75_000L, 150_000L);
+        assertThat(chunks.get(0).transcript()).contains("第一段", "跨重叠区域");
+        assertThat(chunks.get(1).transcript()).contains("跨重叠区域", "第三段");
+        assertThat(chunks.get(0).rawSegments().get(1).endMs()).isEqualTo(100_000L);
+    }
 
-        VideoChunk second = chunks.get(1);
-        assertThat(second.startTime()).isEqualTo(300_000);
-        assertThat(second.endTime()).isEqualTo(350_000);
-        assertThat(second.transcript()).isEqualTo("第二窗口语音");
-        assertThat(second.visualTexts()).contains("画面B");
+    @Test
+    void chunk_shortTailAlreadyCoveredByPreviousWindow_isNotDuplicated() {
+        VideoContext context = VideoContext.of("1", "goal", List.of(
+                seg(0, 80_000, "短视频尾部", List.of())
+        ));
+
+        assertThat(chunk(context)).hasSize(1);
     }
 
     @Test
     void chunk_emptyContext_returnsEmpty() {
-        assertThat(VideoChunkingService.chunk(VideoContext.of("1", "g", List.of()))).isEmpty();
+        assertThat(chunk(VideoContext.of("1", "g", List.of()))).isEmpty();
     }
 
     @Test
@@ -51,8 +61,20 @@ class VideoChunkingServiceTest {
                 seg(0, 30_000, "语音", List.of("重复", "唯一")),
                 seg(30_000, 60_000, "语音2", List.of("重复"))
         ));
-        VideoChunk chunk = VideoChunkingService.chunk(context).get(0);
+        VideoChunk chunk = chunk(context).getFirst();
         assertThat(chunk.visualTexts()).containsExactly("重复", "唯一");
+    }
+
+    @Test
+    void chunkId_isStableAndScopedByUserAndVersion() {
+        String first = VideoChunkingService.chunkId(7L, HASH, 2, 0, 90_000);
+        String same = VideoChunkingService.chunkId(7L, HASH, 2, 0, 90_000);
+        String anotherUser = VideoChunkingService.chunkId(8L, HASH, 2, 0, 90_000);
+        String anotherVersion = VideoChunkingService.chunkId(7L, HASH, 3, 0, 90_000);
+
+        assertThat(first).isEqualTo(same).hasSize(64);
+        assertThat(anotherUser).isNotEqualTo(first);
+        assertThat(anotherVersion).isNotEqualTo(first);
     }
 
     @Test
